@@ -4,6 +4,7 @@ const storeReducer = (state, action) => {
   if (action.type === "login") {
     console.log("action.data");
     console.log(action.data);
+    return "true";
   }
 };
 
