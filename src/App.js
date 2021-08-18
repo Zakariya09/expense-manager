@@ -6,6 +6,8 @@ import Loading from "./pages/Laodign";
 import Layout from "./Layout/Layout";
 function App() {
   const LoginComponent = React.lazy(() => import("./pages/Login"));
+  const ManageExpense = React.lazy(() => import("./pages/ManageExpenseContainer"));
+
   return (
     <Fragment>
       <Layout>
@@ -16,6 +18,9 @@ function App() {
             </Route>
             <Route path="/login">
               <LoginComponent />
+            </Route>
+            <Route path="/manageExpense" exact>
+              <ManageExpense />
             </Route>
             <Route path="/">
               <NotFound />

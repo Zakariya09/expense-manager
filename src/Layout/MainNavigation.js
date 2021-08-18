@@ -15,19 +15,15 @@ import { Link as RouterLink } from "react-router-dom";
 
 const headersData = [
   {
-    label: "Listings",
-    href: "/listings",
+    label: "Manage Expense",
+    href: "/manageExpense",
   },
   {
-    label: "Mentors",
-    href: "/mentors",
+    label: "Halal Check",
+    href: "/halalCheck",
   },
   {
-    label: "My Account",
-    href: "/account",
-  },
-  {
-    label: "Log Out",
+    label: "Logout",
     href: "/logout",
   },
 ];
@@ -152,7 +148,7 @@ export default function Header() {
 
   const femmecubatorLogo = (
     <Typography variant="h6" component="h1" className={logo}>
-      Femmecubator
+      Expense Manager
     </Typography>
   );
 

@@ -74,7 +74,7 @@ const Auth = () => {
     let response = dispatch({ type: "login", data: userObj });
     console.log("response");
     console.log(response);
-    history.replace('/nodata')
+    history.replace("/manageExpense");
   };
   return (
     <Fragment>
