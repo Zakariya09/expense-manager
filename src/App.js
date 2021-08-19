@@ -6,7 +6,10 @@ import Loading from "./pages/Laodign";
 import Layout from "./Layout/Layout";
 function App() {
   const LoginComponent = React.lazy(() => import("./pages/Login"));
-  const ManageExpense = React.lazy(() => import("./pages/ManageExpenseContainer"));
+  const ManageExpense = React.lazy(() =>
+    import("./pages/ManageExpense")
+  );
+  const HalalCheck = React.lazy(() => import("./pages/HalalCheck"));
 
   return (
     <Fragment>
@@ -21,6 +24,9 @@ function App() {
             </Route>
             <Route path="/manageExpense" exact>
               <ManageExpense />
+            </Route>
+            <Route path="/halalCheck" exact>
+              <HalalCheck />
             </Route>
             <Route path="/">
               <NotFound />
