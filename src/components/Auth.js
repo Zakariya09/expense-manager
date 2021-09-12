@@ -1,3 +1,4 @@
+import React, { Component } from "react";
 import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,6 +9,8 @@ import Typography from "@material-ui/core/Typography";
 import FormControl from "@material-ui/core/FormControl";
 import { FormHelperText, Button, Divider, TextField } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
@@ -51,7 +54,7 @@ const Auth = () => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
+  const [username, setName] = useState("");
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false);
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
@@ -67,14 +70,33 @@ const Auth = () => {
   const submitHandler = (event) => {
     event.preventDefault();
     const userObj = {
-      name,
+      username,
       password,
     };
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, userObj.username, userObj.password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+
+        console.log("user");
+        console.log(user);
+
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("error.message");
+        console.log(error.message);
+
+      });
 
     let response = dispatch({ type: "login", data: userObj });
     console.log("response");
     console.log(response);
-    history.replace("/manageExpense");
+    // history.replace("/manageExpense");
   };
   return (
     <Fragment>
@@ -99,7 +121,7 @@ const Auth = () => {
                   type="text"
                   name="username"
                   onChange={nameChangeHandler}
-                  value={name}
+                  value={username}
                 />
                 {emailIsInvalid && (
                   <FormHelperText id="my-helper-text">

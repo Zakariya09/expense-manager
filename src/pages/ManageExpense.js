@@ -1,10 +1,8 @@
-import { Fragment } from "react";
+import React, { Component } from "react";
 import ManageExpense from "../components/ManageExpense";
 const ManageExpenseContainer = () => {
-  return (
-    <Fragment>
-      <ManageExpense />
-    </Fragment>
-  );
+
+     return <ManageExpense />
+   
 };
 export default ManageExpenseContainer;

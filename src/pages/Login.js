@@ -1,6 +1,11 @@
 import Auth from "../components/Auth";
+import React, { Fragment, Component } from "react";
+
+
 const Login = () => {
-  return <Auth></Auth>;
+  return <Fragment>
+    <Auth></Auth>;
+  </Fragment>;
 };
 
 export default Login;
