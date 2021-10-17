@@ -10,16 +10,14 @@ import expenseClasses from "./ManageExpenseLayout.module.css";
 import { Divider } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
 import Table from "../common/Table";
-import firebase from "../firebase";
-import { getDatabase, ref, push, get, child} from "firebase/database";
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Fragment } from "react";
-
-const db = firebase.database();
+import { useDispatch } from "react-redux";
+import {addExpense, removeExpense} from "../store/expense-slice";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,9 +77,8 @@ const ManageExpense = () => {
   const [enteredAmountIsTouched, setEnteredAmountIsTouched] =
     React.useState(false);
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
-
+  const dispatch = useDispatch();
   const [] = useReducer();
-  const k = firebase.database();
 
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
@@ -90,9 +87,7 @@ const ManageExpense = () => {
     !enteredAmountIsValid && enteredAmountIsTouched;
   const enteredDateIsValid = enteredAmount.trim() !== "";
   const enteredDateIsInvalid = !enteredDateIsValid && enteredDateIsTouched;
-  const getData = () =>{
-  
-  }
+  const getData = () => {};
   let formIsValid = false;
   if (enteredNameIsValid && enteredAmountIsValid && enteredDateIsValid) {
     formIsValid = true;
@@ -139,14 +134,14 @@ const ManageExpense = () => {
       amount: enteredAmount,
       date: enteredDate,
     };
+    dispatch(addExpense(obj));
 
     console.log("obj");
     console.log(obj);
-   
 
-    let db = getDatabase();
-    push(ref(db, 'expenses'), obj);
-    return;
+    // let db = getDatabase();
+    // push(ref(db, 'expenses'), obj);
+    // return;
 
     // database.child("expenses").push(obj);
 

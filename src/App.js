@@ -13,11 +13,11 @@ function App() {
 
   return (
     <Fragment>
-      <Layout>
+      <Layout >
         <Suspense fallback={<Loading />}>
           <Switch>
             <Route path="/" exact>
-              <LoginComponent />
+              <HalalCheck />
             </Route>
             <Route path="/login">
               <LoginComponent />

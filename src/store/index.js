@@ -1,13 +1,7 @@
-import { createStore } from "redux";
-const storeReducer = (state, action) => {
+import { configureStore } from "@reduxjs/toolkit"; 
+import expenseSlice from './expense-slice'
 
-  if (action.type === "login") {
-    console.log("action.data");
-    console.log(action.data);
-    return "true";
-  }
-};
 
-const store = createStore(storeReducer);
-
-export default store;
+export default configureStore({
+  reducer: { expense: expenseSlice}
+});

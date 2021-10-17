@@ -70,7 +70,9 @@ export default function Header() {
 
   useEffect(() => {
     const setResponsiveness = () => {
-      return window.innerWidth < 900
+      console.log("window.innerWidth")
+      console.log(window.innerWidth)
+      return window.innerWidth < 700
         ? setState((prevState) => ({ ...prevState, mobileView: true }))
         : setState((prevState) => ({ ...prevState, mobileView: false }));
     };
@@ -148,7 +150,7 @@ export default function Header() {
 
   const femmecubatorLogo = (
     <Typography variant="h6" component="h1" className={logo}>
-      Expense Manager
+    Halal Check
     </Typography>
   );
 
