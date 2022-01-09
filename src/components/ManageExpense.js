@@ -12,12 +12,13 @@ import DateFnsUtils from "@date-io/date-fns";
 import Table from "../common/Table";
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Fragment } from "react";
 import { useDispatch } from "react-redux";
-import {addExpense, removeExpense} from "../store/expense-slice";
+import { addExpense, removeExpense } from "../store/expense-slice";
+import moment from "moment";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiTextField-root": {
       margin: theme.spacing(1),
     },
+     "& .MuiButton-root":{
+      textTransform:"capitalize"
+    }
   },
   modal: {
     display: "flex",
@@ -50,24 +54,39 @@ const useStyles = makeStyles((theme) => ({
     padding: " 12px",
     margin: " -17px -33px 12px -33px",
     overflowX: " hidden",
-    background: " violet",
+    background: "#5521d3c7",
+    "& h2":{
+      filter:"drop-shadow(3px 0px 8px white )",
+      color:"white"
+    }
   },
+  modalActions:{
+    display:"flex",
+    flexDirection:"row",
+    justifyContent:"end",
+    "& button":{
+      textTransform:"capitalize"
+    }
+  }
 }));
 
 function createData(name, amount, date) {
   return { name, amount, date };
 }
 
-const rows = [
-  { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
-];
+// const rows = [
+//   { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
+// ];
 const columns = [
   { id: "name", label: "Name", minWidth: 170 },
   { id: "amount", label: "Amount", minWidth: 100 },
   { id: "date", label: "Date", minWidth: 100 },
+  { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
 const ManageExpense = () => {
+  const rows = useSelector((state) => state.expense.expenses);
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [enteredName, setEnteredName] = React.useState("");
@@ -79,7 +98,9 @@ const ManageExpense = () => {
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
   const dispatch = useDispatch();
   const [] = useReducer();
-
+const handleEdit =(data)=>{
+console.log(data)
+}
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
   const enteredAmountIsValid = enteredAmount.trim() !== "";
@@ -132,18 +153,9 @@ const ManageExpense = () => {
     const obj = {
       name: enteredName,
       amount: enteredAmount,
-      date: enteredDate,
+      date: moment(enteredDate).format("DD-MM-YYYY"),
     };
     dispatch(addExpense(obj));
-
-    console.log("obj");
-    console.log(obj);
-
-    // let db = getDatabase();
-    // push(ref(db, 'expenses'), obj);
-    // return;
-
-    // database.child("expenses").push(obj);
 
     setEnteredName("");
     setEnteredNameIsTouched(false);
@@ -172,9 +184,8 @@ const ManageExpense = () => {
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} />
+            <Table rows={rows} columns={columns} handleEdit= {handleEdit}/>
           </section>
-
           <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
@@ -206,10 +217,10 @@ const ManageExpense = () => {
                     autoComplete="off"
                   >
                     <Grid container>
-                      <Grid item md={2} xs={3}>
+                      <Grid item md={2} xs={12} sm={12}>
                         <label>Name :</label>
                       </Grid>
-                      <Grid item md={8} xs={9}>
+                      <Grid item md={10} xs={12} sm={12}>
                         <TextField
                           label="Name"
                           id="name"
@@ -226,11 +237,10 @@ const ManageExpense = () => {
                           </p>
                         )}
                       </Grid>
-                      <Grid item md={2} xs={0}></Grid>
-                      <Grid item md={2} xs={3}>
+                      <Grid item md={2} xs={12} sm={12}>
                         <label>Amount :</label>
                       </Grid>
-                      <Grid item md={8} xs={8}>
+                      <Grid item md={10} xs={12} sm={12}>
                         <TextField
                           label="Amount"
                           id="amount"
@@ -249,11 +259,10 @@ const ManageExpense = () => {
                           </p>
                         )}
                       </Grid>
-                      <Grid item md={2} xs={1}></Grid>
-                      <Grid item md={2} xs={3}>
+                      <Grid item md={2} xs={12} sm={12}>
                         <label>Date :</label>
                       </Grid>
-                      <Grid item md={8} xs={8}>
+                      <Grid item md={10} xs={8}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                           <Grid container justifyContent="space-around">
                             <KeyboardDatePicker
@@ -280,30 +289,28 @@ const ManageExpense = () => {
                       </Grid>
                     </Grid>
                     <Divider />
-                    <div>
-                      <Grid container spacing={1}>
-                        <Grid item md={8} xs={2}></Grid>
-                        <Grid item md={4} xs={10}>
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            disabled={!formIsValid}
-                          >
-                            <span className="material-icons">save</span> Save
-                          </Button>{" "}
-                          &nbsp;&nbsp;
-                          <Button
-                            type="button"
-                            onClick={handleClose}
-                            variant="contained"
-                            color="secondary"
-                          >
-                            <span className="material-icons">close</span> Close
-                          </Button>
-                        </Grid>
+                    <Grid container spacing={1}>
+                      <Grid item md={8} xs={2}></Grid>
+                      <Grid item md={4} xs={12} sm={12} className={classes.modalActions}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          disabled={!formIsValid}
+                        >
+                          <span className="material-icons">save</span> Save
+                        </Button>
+                        &nbsp;&nbsp;
+                        <Button
+                          type="button"
+                          onClick={handleClose}
+                          variant="contained"
+                          color="secondary"
+                        >
+                          <span className="material-icons">close</span> Close
+                        </Button>
                       </Grid>
-                    </div>
+                    </Grid>
                   </form>
                 </div>
               </div>

@@ -8,6 +8,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles({
   root: {
@@ -59,12 +60,25 @@ export default function StickyHeadTable(props) {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
+                          {column.format && typeof value === "number" ? (
+                            column.format(value)
+                          ) : value === undefined ? (
+                            <DeleteIcon
+                              aria-label="edit"
+                              onClick={() => props.handleEdit(row)}
+                            />
+                          ) : (
+                            value
+                          )}
                         </TableCell>
                       );
                     })}
+                    {/* <TableCell>
+                      <DeleteIcon
+                        aria-label="edit"
+                        onClick={() => props.handleEdit(row)}
+                      />
+                    </TableCell> */}
                   </TableRow>
                 );
               })}

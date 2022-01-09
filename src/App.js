@@ -4,16 +4,40 @@ import "./App.css";
 import NotFound from "./pages/NotFound";
 import Loading from "./pages/Laodign";
 import Layout from "./Layout/Layout";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { sendData, getExpenses } from "./store/expense-actions";
+import { useDispatch } from "react-redux";
+
+let isInitial = true;
 function App() {
   const LoginComponent = React.lazy(() => import("./pages/Login"));
-  const ManageExpense = React.lazy(() =>
-    import("./pages/ManageExpense")
-  );
+  const ManageExpense = React.lazy(() => import("./pages/ManageExpense"));
   const HalalCheck = React.lazy(() => import("./pages/HalalCheck"));
+  const expenses = useSelector((state) => state.expense.expenses);
+  const change = useSelector((state) => state.expense.change);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getExpenses());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("change");
+    console.log(change);
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    if (change) {
+      dispatch(sendData(expenses));
+    }
+  }, [expenses, change]);
 
   return (
     <Fragment>
-      <Layout >
+      <Layout>
         <Suspense fallback={<Loading />}>
           <Switch>
             <Route path="/" exact>

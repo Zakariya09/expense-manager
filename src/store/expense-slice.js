@@ -2,31 +2,35 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   expenses: [],
+  change: false,
 };
 const expenseSlice = createSlice({
   name: "expense",
   initialState,
-  changed: false,
   reducers: {
-    addExpense(state, action) {
-      console.log("add expense call");
+    updateExpenses (state, action){
+      console.log("updating state");
+      console.log(action);
 
+      state.expenses = [...action.payload]
+      console.log("expenses after update state");
+      console.log(state.expenses);
+    },
+    addExpense(state, action) {
       const newExpense = action.payload;
-      console.log("newExpense");
-      console.log(newExpense);
-      const existingExpense = state.expenses.find(
-        (expense) => expense.id === newExpense.id
-      );
-      if (!existingExpense) {
-        state.expenses.push(newExpense);
-      }
+      state.change = true;
+      state.expenses.push(newExpense);
+      console.log("after fetch state.expenses")
+      console.log( state.expenses)
     },
     removeExpense(state, action) {
       const id = action.payload;
+      state.change = true;
       // const existingExpense = state.expenses.find(expense => expense.id === id);
       state.expenses = state.expenses.filter((expense) => expense.id !== id);
     },
   },
 });
-export const {addExpense, removeExpense} = expenseSlice.actions;
+
+export const { addExpense, removeExpense, updateExpenses } = expenseSlice.actions;
 export default expenseSlice.reducer;
