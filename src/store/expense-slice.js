@@ -28,6 +28,8 @@ const expenseSlice = createSlice({
       state.change = true;
       // const existingExpense = state.expenses.find(expense => expense.id === id);
       state.expenses = state.expenses.filter((expense) => expense.id !== id);
+      console.log("Deleted")
+      console.log( state.expenses)
     },
   },
 });

@@ -29,9 +29,9 @@ const useStyles = makeStyles((theme) => ({
     "& .MuiTextField-root": {
       margin: theme.spacing(1),
     },
-     "& .MuiButton-root":{
-      textTransform:"capitalize"
-    }
+    "& .MuiButton-root": {
+      textTransform: "capitalize",
+    },
   },
   modal: {
     display: "flex",
@@ -55,19 +55,19 @@ const useStyles = makeStyles((theme) => ({
     margin: " -17px -33px 12px -33px",
     overflowX: " hidden",
     background: "#5521d3c7",
-    "& h2":{
-      filter:"drop-shadow(3px 0px 8px white )",
-      color:"white"
-    }
+    "& h2": {
+      filter: "drop-shadow(3px 0px 8px white )",
+      color: "white",
+    },
   },
-  modalActions:{
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:"end",
-    "& button":{
-      textTransform:"capitalize"
-    }
-  }
+  modalActions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "end",
+    "& button": {
+      textTransform: "capitalize",
+    },
+  },
 }));
 
 function createData(name, amount, date) {
@@ -98,9 +98,10 @@ const ManageExpense = () => {
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
   const dispatch = useDispatch();
   const [] = useReducer();
-const handleEdit =(data)=>{
-console.log(data)
-}
+  const handleEdit = (data) => {
+    console.log(data);
+    dispatch(removeExpense(data.id))
+  };
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
   const enteredAmountIsValid = enteredAmount.trim() !== "";
@@ -184,7 +185,7 @@ console.log(data)
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} handleEdit= {handleEdit}/>
+            <Table rows={rows} columns={columns} handleEdit={handleEdit} />
           </section>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -291,7 +292,13 @@ console.log(data)
                     <Divider />
                     <Grid container spacing={1}>
                       <Grid item md={8} xs={2}></Grid>
-                      <Grid item md={4} xs={12} sm={12} className={classes.modalActions}>
+                      <Grid
+                        item
+                        md={4}
+                        xs={12}
+                        sm={12}
+                        className={classes.modalActions}
+                      >
                         <Button
                           type="submit"
                           variant="contained"
