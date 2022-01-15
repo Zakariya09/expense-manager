@@ -19,7 +19,8 @@ import { useDispatch } from "react-redux";
 import { addExpense, removeExpense } from "../store/expense-slice";
 import moment from "moment";
 import { useSelector } from "react-redux";
-
+import DeleteIcon from "@material-ui/icons/Delete";
+import Typography from "@material-ui/core/Typography";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -68,6 +69,19 @@ const useStyles = makeStyles((theme) => ({
       textTransform: "capitalize",
     },
   },
+  deleteContent: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "& svg": {
+      color: "red",
+      fontSize: "5rem",
+      margin: "1rem",
+    },
+    "& h6": {
+      margin: "1rem",
+    },
+  },
 }));
 
 function createData(name, amount, date) {
@@ -89,6 +103,8 @@ const ManageExpense = () => {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
   const [enteredName, setEnteredName] = React.useState("");
   const [enteredAmount, setEnteredAmount] = React.useState("");
   const [enteredDate, setEnteredDate] = React.useState(new Date());
@@ -96,11 +112,16 @@ const ManageExpense = () => {
   const [enteredAmountIsTouched, setEnteredAmountIsTouched] =
     React.useState(false);
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
+  const [data, setData] = React.useState({});
   const dispatch = useDispatch();
   const [] = useReducer();
-  const handleEdit = (data) => {
-    console.log(data);
-    dispatch(removeExpense(data.id))
+
+  const handleDelete = (expenseObj) => {
+    setShowDeleteModal(true);
+    setData(expenseObj);
+  };
+  const deleteExpense = () => {
+    dispatch(removeExpense(data.id));
   };
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
@@ -123,6 +144,9 @@ const ManageExpense = () => {
     setOpen(false);
   };
 
+  const handleDeleteClose = () => {
+    setShowDeleteModal(false);
+  };
   const nameChangeHandler = (event) => {
     setEnteredName(event.target.value);
   };
@@ -185,7 +209,7 @@ const ManageExpense = () => {
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} handleEdit={handleEdit} />
+            <Table rows={rows} columns={columns} handleDelete={handleDelete} />
           </section>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -314,12 +338,68 @@ const ManageExpense = () => {
                           variant="contained"
                           color="secondary"
                         >
-                          <span className="material-icons">close</span> Close
+                          <span className="material-icons">close</span> Cancel
                         </Button>
                       </Grid>
                     </Grid>
                   </form>
                 </div>
+              </div>
+            </Fade>
+          </Modal>
+
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={showDeleteModal}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={showDeleteModal}>
+              <div className={classes.paper}>
+                <div className={classes.deleteContent}>
+                  <DeleteIcon />
+                  <Typography variant="h4" gutterBottom>
+                    Are you sure wants to delete the record?
+                  </Typography>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Once deleted, you will not be able to recover this record!
+                  </Typography>
+                </div>
+                <Divider />
+                <Grid container spacing={1}>
+                  <Grid item md={8} xs={2}></Grid>
+                  <Grid
+                    item
+                    md={4}
+                    xs={12}
+                    sm={12}
+                    className={classes.modalActions}
+                  >
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      onClick={deleteExpense}
+                    >
+                      <DeleteIcon /> Delete
+                    </Button>
+                    &nbsp;&nbsp;
+                    <Button
+                      type="button"
+                      onClick={handleDeleteClose}
+                      variant="contained"
+                      color="secondary"
+                    >
+                      <span className="material-icons">close</span> Cancel
+                    </Button>
+                  </Grid>
+                </Grid>
               </div>
             </Fade>
           </Modal>

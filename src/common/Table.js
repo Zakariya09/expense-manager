@@ -65,7 +65,7 @@ export default function StickyHeadTable(props) {
                           ) : value === undefined ? (
                             <DeleteIcon
                               aria-label="edit"
-                              onClick={() => props.handleEdit(row)}
+                              onClick={() => props.handleDelete(row)}
                             />
                           ) : (
                             value
