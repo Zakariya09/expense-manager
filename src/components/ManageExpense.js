@@ -130,7 +130,6 @@ const ManageExpense = () => {
     !enteredAmountIsValid && enteredAmountIsTouched;
   const enteredDateIsValid = enteredAmount.trim() !== "";
   const enteredDateIsInvalid = !enteredDateIsValid && enteredDateIsTouched;
-  const getData = () => {};
   let formIsValid = false;
   if (enteredNameIsValid && enteredAmountIsValid && enteredDateIsValid) {
     formIsValid = true;

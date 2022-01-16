@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import FormControl from "@material-ui/core/FormControl";
 import { FormHelperText, Button, Divider, TextField } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { loggedIn, logout } from "../store/auth-slice";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,11 +50,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Auth = () => {
+const Auth = (props) => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
-  const [username, setName] = useState("");
+  const [userName, setName] = useState("");
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false);
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
@@ -70,33 +70,23 @@ const Auth = () => {
   const submitHandler = (event) => {
     event.preventDefault();
     const userObj = {
-      username,
+      userName,
       password,
     };
 
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, userObj.username, userObj.password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
+    console.log("userObj");
+    console.log(userObj);
 
-        console.log("user");
-        console.log(user);
+    if (userObj.userName !== "" && userObj.password !== "") {
+      dispatch(loggedIn(userObj));
+      history.replace("/manage-expense");
+    } else {
+      return;
+    }
 
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("error.message");
-        console.log(error.message);
-
-      });
-
-    let response = dispatch({ type: "login", data: userObj });
-    console.log("response");
-    console.log(response);
-    // history.replace("/manageExpense");
+    // let response = dispatch({ type: "login", data: userObj });
+    // console.log("response");
+    // console.log(response);
   };
   return (
     <Fragment>
@@ -112,16 +102,21 @@ const Auth = () => {
             </Typography>
             <Divider className={classes.mtTop}></Divider>
 
-            <form onSubmit={submitHandler} className={classes.alignCard}>
+            <form
+              onSubmit={submitHandler}
+              className={classes.alignCard}
+              name="loginForm"
+            >
               <FormControl className={classes.maxWidth}>
                 <TextField
                   variant="outlined"
                   label="Username"
                   size="small"
                   type="text"
-                  name="username"
+                  name="userName"
                   onChange={nameChangeHandler}
-                  value={username}
+                  value={userName}
+                  required
                 />
                 {emailIsInvalid && (
                   <FormHelperText id="my-helper-text">
@@ -140,6 +135,7 @@ const Auth = () => {
                   name="password"
                   onChange={passwordChangeHandler}
                   value={password}
+                  required
                 />
                 {passwordIsInvalid && (
                   <FormHelperText id="password">

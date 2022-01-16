@@ -1,4 +1,4 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import React, { Fragment, Suspense } from "react";
 import "./App.css";
 import NotFound from "./pages/NotFound";
@@ -16,7 +16,8 @@ function App() {
   const HalalCheck = React.lazy(() => import("./pages/HalalCheck"));
   const expenses = useSelector((state) => state.expense.expenses);
   const change = useSelector((state) => state.expense.change);
-
+  const userObj = useSelector((state) => state.auth.userObj);
+  const isLoggedIn = JSON.parse(localStorage.getItem("userObject"));
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,8 +25,6 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("change");
-    console.log(change);
     if (isInitial) {
       isInitial = false;
       return;
@@ -35,24 +34,33 @@ function App() {
     }
   }, [expenses, change]);
 
+  useEffect(() => {
+    if (userObj !== undefined) {
+      localStorage.setItem("userObject", JSON.stringify(userObj));
+    }
+  }, [userObj]);
+
   return (
     <Fragment>
       <Layout>
         <Suspense fallback={<Loading />}>
           <Switch>
             <Route path="/" exact>
-              <HalalCheck />
+              {userObj !== null && <Redirect to="/halal-check" />}
+              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
             </Route>
             <Route path="/login">
               <LoginComponent />
             </Route>
-            <Route path="/manageExpense" exact>
-              <ManageExpense />
+            <Route path="/manage-expense" exact>
+              {userObj !== null && <ManageExpense />}
+              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
             </Route>
-            <Route path="/halalCheck" exact>
-              <HalalCheck />
+            <Route path="/halal-check" exact>
+              {userObj !== null && <HalalCheck />}
+              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
             </Route>
-            <Route path="/">
+            <Route path="*">
               <NotFound />
             </Route>
           </Switch>

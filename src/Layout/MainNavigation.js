@@ -11,7 +11,9 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/auth-slice";
 
 const headersData = [
   {
@@ -60,18 +62,27 @@ const useStyles = makeStyles(() => ({
 
 export default function Header() {
   const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
-
+  let history = useHistory();
   const [state, setState] = useState({
     mobileView: false,
     drawerOpen: false,
+    isLoggedIn: false,
   });
+  const dispatch = useDispatch();
+  const userObj = useSelector((state) => state.auth.userObj);
 
-  const { mobileView, drawerOpen } = state;
+  useEffect(async () => {
+    await setState((prevState) => ({
+      ...prevState,
+      isLoggedIn: Object.keys(userObj).length !== 0,
+    }));
+  }, [userObj]);
+  const { mobileView, drawerOpen, isLoggedIn } = state;
 
   useEffect(() => {
     const setResponsiveness = () => {
-      console.log("window.innerWidth")
-      console.log(window.innerWidth)
+      console.log("window.innerWidth");
+      console.log(window.innerWidth);
       return window.innerWidth < 700
         ? setState((prevState) => ({ ...prevState, mobileView: true }))
         : setState((prevState) => ({ ...prevState, mobileView: false }));
@@ -129,11 +140,21 @@ export default function Header() {
       </Toolbar>
     );
   };
-
+  const logoutApp = (data) => {
+    console.log("data");
+    console.log(data);
+    if (data === "Logout") {
+      localStorage.clear("userObj");
+      dispatch(logout());
+      history.push("/login");
+    } else if (data !== undefined) {
+      history.push(`/${data.toLowerCase().replace(/\s/g, "-")}`);
+    }
+  };
   const getDrawerChoices = () => {
     return headersData.map(({ label, href }) => {
       return (
-        <Link
+        <div
           {...{
             component: RouterLink,
             to: href,
@@ -142,33 +163,34 @@ export default function Header() {
             key: label,
           }}
         >
-          <MenuItem>{label}</MenuItem>
-        </Link>
+          {Object.keys(userObj).length !== 0 ? (
+            <MenuItem onClick={() => logoutApp(label)}>{label}</MenuItem>
+          ) : null}
+        </div>
       );
     });
   };
 
   const femmecubatorLogo = (
     <Typography variant="h6" component="h1" className={logo}>
-    Halal Check
+      Halal Check
     </Typography>
   );
 
   const getMenuButtons = () => {
     return headersData.map(({ label, href }) => {
-      return (
+      return Object.keys(userObj).length !== 0 ? (
         <Button
           {...{
             key: label,
             color: "inherit",
-            to: href,
-            component: RouterLink,
             className: menuButton,
           }}
+          onClick={() => logoutApp(label)}
         >
           {label}
         </Button>
-      );
+      ) : null;
     });
   };
 
