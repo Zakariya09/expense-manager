@@ -79,6 +79,7 @@ const Auth = (props) => {
 
     if (userObj.userName !== "" && userObj.password !== "") {
       dispatch(loggedIn(userObj));
+      localStorage.setItem("userObject", JSON.stringify(userObj));
       history.replace("/manage-expense");
     } else {
       return;

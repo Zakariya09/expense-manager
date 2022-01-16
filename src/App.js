@@ -17,7 +17,10 @@ function App() {
   const expenses = useSelector((state) => state.expense.expenses);
   const change = useSelector((state) => state.expense.change);
   const userObj = useSelector((state) => state.auth.userObj);
-  const isLoggedIn = JSON.parse(localStorage.getItem("userObject"));
+  const isLoggedIn =
+    localStorage.getItem("userObject") &&
+    Object.keys(JSON.parse(localStorage.getItem("userObject"))).length !== 0;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,11 +37,15 @@ function App() {
     }
   }, [expenses, change]);
 
-  useEffect(() => {
-    if (userObj !== undefined) {
-      localStorage.setItem("userObject", JSON.stringify(userObj));
-    }
-  }, [userObj]);
+  // useEffect(() => {
+  //   console.log("isLoggedIn")
+  //   console.log(isLoggedIn)
+  //   console.log("userObj")
+  //   console.log(userObj)
+  //   if (isLoggedIn) {
+  //     localStorage.setItem("userObject", JSON.stringify(userObj));
+  //   }
+  // }, [userObj]);
 
   return (
     <Fragment>
@@ -46,19 +53,20 @@ function App() {
         <Suspense fallback={<Loading />}>
           <Switch>
             <Route path="/" exact>
-              {userObj !== null && <Redirect to="/halal-check" />}
-              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
+              {isLoggedIn ? (
+                <Redirect to="/halal-check" />
+              ) : (
+                <Redirect to="/login" />
+              )}
             </Route>
             <Route path="/login">
               <LoginComponent />
             </Route>
             <Route path="/manage-expense" exact>
-              {userObj !== null && <ManageExpense />}
-              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
+              {isLoggedIn ? <ManageExpense /> : <Redirect to="/login" />}
             </Route>
             <Route path="/halal-check" exact>
-              {userObj !== null && <HalalCheck />}
-              {Object.keys(userObj).length === 0 && <Redirect to="/login" />}
+              {isLoggedIn ? <HalalCheck /> : <Redirect to="/login" />}
             </Route>
             <Route path="*">
               <NotFound />
