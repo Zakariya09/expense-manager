@@ -16,12 +16,11 @@ import {
 } from "@material-ui/pickers";
 import { Fragment } from "react";
 import { useDispatch } from "react-redux";
-import { addExpense, removeExpense } from "../store/expense-slice";
+import { addSalary, removeSalary } from "../store/salary-slice";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,78 +83,6 @@ const useStyles = makeStyles((theme) => ({
       margin: "1rem",
     },
   },
-  totalExpense: {
-    background: "#ff0909e0",
-    color: "white",
-    padding: "2px",
-    marginBottom:"5px",
-    width: "calc(100% - 2rem)",
-    border: "1px solid red",
-    boxShadow: "-1px 0px 14px red",
-    "& h5": {
-      fontWeight: "bold",
-      // padding: "13px",
-      textAlign: "center",
-      fontSize: "30px",
-    },
-    "& span": {
-      textAlign: "center",
-    },
-  },
-  currentExpense: {
-    background: "#3a09ffe0",
-    color: "white",
-    padding: "2px",
-    marginBottom:"5px",
-    width: "calc(100% - 2rem)",
-    border: "1px solid #3a09ffe0",
-    boxShadow: "-1px 0px 14px #3a09ffe0",
-    "& h5": {
-      fontWeight: "bold",
-      // padding: "13px",
-      textAlign: "center",
-      fontSize: "30px",
-    },
-    "& span": {
-      textAlign: "center",
-    },
-  },
-  savingsCard: {
-    background: "#24ff09d9",
-    color: "white",
-    padding: "2px",
-    marginBottom:"5px",
-    width: "calc(100% - 2rem)",
-    border: "1px solid #24ff09d9",
-    boxShadow: "-1px 0px 14px #24ff09d9",
-    "& h5": {
-      fontWeight: "bold",
-      // padding: "13px",
-      textAlign: "center",
-      fontSize: "30px",
-    },
-    "& span": {
-      textAlign: "center",
-    },
-  },
-  investCard: {
-    background: "#8909ffd9",
-    color: "white",
-    padding: "2px",
-    marginBottom:"5px",
-    width: "calc(100% - 2rem)",
-    border: "1px solid #8909ffd9",
-    boxShadow: "-1px 0px 14px #8909ffd9",
-    "& h5": {
-      fontWeight: "bold",
-      // padding: "13px",
-      textAlign: "center",
-      fontSize: "30px",
-    },
-    "& span": {
-      textAlign: "center",
-    },
-  },
 }));
 
 function createData(name, amount, date) {
@@ -166,35 +93,20 @@ function createData(name, amount, date) {
 //   { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
 // ];
 const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "amount", label: "Amount", minWidth: 100 },
   { id: "date", label: "Date", minWidth: 100 },
+  { id: "amount", label: "Amount", minWidth: 100 },
   { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
 const ManageSalary = () => {
-  const rows = useSelector((state) => state.expense.expenses);
-  let totalAmount = 0;
-  let currentMonthExpense = 0;
-  let currentMonth = new Date().getMonth() + 1;
-  let currentYear = new Date().getYear() + 1900;
-  const totalExpenses = rows.forEach((item) => {
-    totalAmount += Number(item.amount);
-    if(Number(item.date.split("-")[1]) === currentMonth && Number(item.date.split("-")[2]) === currentYear){
-      currentMonthExpense += Number(item.amount);
-    }
-  });
-  console.log("totalAmount");
-  console.log(totalAmount);
+  const rows = useSelector((state) => state.salary.salaries);
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
-  const [enteredName, setEnteredName] = React.useState("");
   const [enteredAmount, setEnteredAmount] = React.useState("");
   const [enteredDate, setEnteredDate] = React.useState(new Date());
-  const [enteredNameIsTouched, setEnteredNameIsTouched] = React.useState(false);
   const [enteredAmountIsTouched, setEnteredAmountIsTouched] =
     React.useState(false);
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
@@ -207,17 +119,15 @@ const ManageSalary = () => {
     setData(expenseObj);
   };
   const deleteExpense = () => {
-    dispatch(removeExpense(data.id));
+    dispatch(removeSalary(data.id));
   };
-  const enteredNameIsValid = enteredName.trim() !== "";
-  const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
   const enteredAmountIsValid = enteredAmount.trim() !== "";
   const enteredAmountIsInvalid =
     !enteredAmountIsValid && enteredAmountIsTouched;
   const enteredDateIsValid = enteredAmount.trim() !== "";
   const enteredDateIsInvalid = !enteredDateIsValid && enteredDateIsTouched;
   let formIsValid = false;
-  if (enteredNameIsValid && enteredAmountIsValid && enteredDateIsValid) {
+  if (enteredAmountIsValid && enteredDateIsValid) {
     formIsValid = true;
   }
 
@@ -231,13 +141,6 @@ const ManageSalary = () => {
 
   const handleDeleteClose = () => {
     setShowDeleteModal(false);
-  };
-  const nameChangeHandler = (event) => {
-    setEnteredName(event.target.value);
-  };
-
-  const nameBlurHandler = (event) => {
-    setEnteredNameIsTouched(true);
   };
 
   const amountChangeHandler = (event) => {
@@ -256,19 +159,13 @@ const ManageSalary = () => {
 
   const formHandler = (event) => {
     event.preventDefault();
-    setEnteredNameIsTouched(true);
-    if (!enteredNameIsValid) {
-      return;
-    }
+   
     const obj = {
-      name: enteredName,
       amount: enteredAmount,
       date: moment(enteredDate).format("DD-MM-YYYY"),
     };
-    dispatch(addExpense(obj));
+    dispatch(addSalary(obj));
 
-    setEnteredName("");
-    setEnteredNameIsTouched(false);
     setEnteredAmount("");
     setEnteredAmountIsTouched(false);
     setEnteredDate(new Date());
@@ -279,48 +176,6 @@ const ManageSalary = () => {
   return (
     <Fragment>
       <Grid container>
-        <Grid item md={2} xs={6} sm={6}>
-          <Paper elevation={1} className={classes.totalExpense}>
-            <Typography variant="h5" gutterBottom>
-              {totalAmount}
-            </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              Total Expense
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={2} xs={6} sm={6}>
-          <Paper elevation={1} className={classes.currentExpense}>
-            <Typography variant="h5" gutterBottom>
-              {currentMonthExpense}
-            </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              Expense This Month
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={2} xs={6} sm={6}>
-          <Paper elevation={1} className={classes.savingsCard}>
-            <Typography variant="h5" gutterBottom>
-              {totalAmount}
-            </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              Total Savings
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item md={2} xs={6} sm={6}>
-          <Paper elevation={1} className={classes.investCard}>
-            <Typography variant="h5" gutterBottom>
-              {totalAmount}
-            </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              Total Invested
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-      <Grid container>
         <Grid item md={12} xs={12} sm={12}>
           <div>
             <Button
@@ -330,7 +185,7 @@ const ManageSalary = () => {
               color="primary"
               className={classes.floatRight}
             >
-              <span className="material-icons">add</span> Add Expense
+              <span className="material-icons">add</span> Add Salary
             </Button>
           </div>
         </Grid>
@@ -355,10 +210,7 @@ const ManageSalary = () => {
                 <div
                   className={`${classes.modalTitle} ${expenseClasses.modalHeader}`}
                 >
-                  <h2 id="transition-modal-title">Add Expenses</h2>
-                  {/* <Typography variant="h3" id="transition-modal-title" gutterBottom>
-              Add Expenses
-              </Typography> */}
+                  <h2 id="transition-modal-title">Add Salary</h2>
                 </div>
                 <Divider />
                 <div>
@@ -369,26 +221,6 @@ const ManageSalary = () => {
                     autoComplete="off"
                   >
                     <Grid container>
-                      <Grid item md={2} xs={12} sm={12}>
-                        <label>Name :</label>
-                      </Grid>
-                      <Grid item md={10} xs={12} sm={12}>
-                        <TextField
-                          label="Name"
-                          id="name"
-                          variant="outlined"
-                          size="small"
-                          style={{ width: "100%" }}
-                          onChange={nameChangeHandler}
-                          onBlur={nameBlurHandler}
-                          value={enteredName}
-                        />
-                        {enteredNameIsInvalid && (
-                          <p className={expenseClasses.errorText}>
-                            Please enter name.
-                          </p>
-                        )}
-                      </Grid>
                       <Grid item md={2} xs={12} sm={12}>
                         <label>Amount :</label>
                       </Grid>

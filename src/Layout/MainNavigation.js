@@ -71,13 +71,17 @@ export default function Header() {
   const dispatch = useDispatch();
   const userObj = useSelector((state) => state.auth.userObj);
 
+  const isLoggedIn =
+    localStorage.getItem("userObject") &&
+    Object.keys(JSON.parse(localStorage.getItem("userObject"))).length !== 0;
+
   useEffect(async () => {
     await setState((prevState) => ({
       ...prevState,
       isLoggedIn: Object.keys(userObj).length !== 0,
     }));
   }, [userObj]);
-  const { mobileView, drawerOpen, isLoggedIn } = state;
+  const { mobileView, drawerOpen} = state;
 
   useEffect(() => {
     const setResponsiveness = () => {
@@ -163,7 +167,7 @@ export default function Header() {
             key: label,
           }}
         >
-          {Object.keys(userObj).length !== 0 ? (
+          {isLoggedIn ? (
             <MenuItem onClick={() => logoutApp(label)}>{label}</MenuItem>
           ) : null}
         </div>
@@ -179,7 +183,7 @@ export default function Header() {
 
   const getMenuButtons = () => {
     return headersData.map(({ label, href }) => {
-      return Object.keys(userObj).length !== 0 ? (
+      return isLoggedIn ? (
         <Button
           {...{
             key: label,
