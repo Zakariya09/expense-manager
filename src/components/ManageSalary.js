@@ -172,7 +172,7 @@ const columns = [
   { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
-const ManageExpense = () => {
+const ManageSalary = () => {
   const rows = useSelector((state) => state.expense.expenses);
   let totalAmount = 0;
   let currentMonthExpense = 0;
@@ -536,4 +536,4 @@ const ManageExpense = () => {
   );
 };
 
-export default ManageExpense;
+export default ManageSalary;
