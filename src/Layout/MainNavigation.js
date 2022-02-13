@@ -20,9 +20,21 @@ const headersData = [
     label: "Manage Expense",
     href: "/manageExpense",
   },
+   {
+    label: "Manage Salary",
+    href: "/manage-salary",
+  },
   {
     label: "Halal Check",
     href: "/halalCheck",
+  },
+   {
+    label: "Manage Journal",
+    href: "/manage-journal",
+  },
+  {
+    label: "Manage Equity",
+    href: "/manage-equity",
   },
   {
     label: "Logout",
@@ -64,7 +76,7 @@ export default function Header() {
   const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
   let history = useHistory();
   const [state, setState] = useState({
-    mobileView: false,
+    mobileView: true,
     drawerOpen: false,
     isLoggedIn: false,
   });
@@ -85,20 +97,18 @@ export default function Header() {
 
   useEffect(() => {
     const setResponsiveness = () => {
-      // console.log("window.innerWidth");
-      // console.log(window.innerWidth);
       return window.innerWidth < 700
         ? setState((prevState) => ({ ...prevState, mobileView: true }))
         : setState((prevState) => ({ ...prevState, mobileView: false }));
     };
 
-    setResponsiveness();
+    // setResponsiveness();
 
-    window.addEventListener("resize", () => setResponsiveness());
+    // window.addEventListener("resize", () => setResponsiveness());
 
-    return () => {
-      window.removeEventListener("resize", () => setResponsiveness());
-    };
+    // return () => {
+    //   window.removeEventListener("resize", () => setResponsiveness());
+    // };
   }, []);
 
   const displayDesktop = () => {

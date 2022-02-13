@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { sendData, getExpenses } from "./store/expense-actions";
 import { sendSalaryData, getSalary } from "./store/salary-actions";
+import { sendJournalData, getJournal } from "./store/journal-actions";
+import { sendEquityData, getEquity } from "./store/equity-actions";
 import { useDispatch } from "react-redux";
 
 let isInitial = true;
@@ -16,11 +18,18 @@ function App() {
   const ManageExpense = React.lazy(() => import("./pages/ManageExpense"));
   const HalalCheck = React.lazy(() => import("./pages/HalalCheck"));
   const ManageSalary = React.lazy(() => import("./pages/ManageSalary"));
+  const StockJournal = React.lazy(() => import("./pages/StockJournal"));
+  const ManageEquity = React.lazy(() => import("./pages/ManageEquity"));
+
   const expenses = useSelector((state) => state.expense.expenses);
   const change = useSelector((state) => state.expense.change);
   const userObj = useSelector((state) => state.auth.userObj);
   const salaries = useSelector((state) => state.salary.salaries);
+  const journals = useSelector((state) => state.journal.journals);
+  const equities = useSelector((state) => state.equity.equities);
   const isSalaryUpdate = useSelector((state) => state.salary.isSalaryUpdate);
+  const isJournalUpdate = useSelector((state) => state.journal.isJournalUpdate);
+  const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -31,6 +40,8 @@ function App() {
   useEffect(() => {
     dispatch(getExpenses());
     dispatch(getSalary());
+    dispatch(getJournal());
+    dispatch(getEquity());
   }, [dispatch]);
 
   useEffect(() => {
@@ -53,6 +64,25 @@ function App() {
     }
   }, [salaries, isSalaryUpdate]);
 
+ useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    if (isJournalUpdate) {
+      dispatch(sendJournalData(journals));
+    }
+  }, [journals, isJournalUpdate]);
+
+  useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    if (isEquityUpdate) {
+      dispatch(sendEquityData(equities));
+    }
+  }, [equities, isEquityUpdate]);
   // useEffect(() => {
   //   console.log("isLoggedIn")
   //   console.log(isLoggedIn)
@@ -86,6 +116,12 @@ function App() {
             </Route>
             <Route path="/manage-salary" exact>
               {isLoggedIn ? <ManageSalary /> : <Redirect to="/login" />}
+            </Route>
+             <Route path="/manage-journal" exact>
+              {isLoggedIn ? <StockJournal /> : <Redirect to="/login" />}
+            </Route>
+               <Route path="/manage-equity" exact>
+              {isLoggedIn ? <ManageEquity /> : <Redirect to="/login" />}
             </Route>
             <Route path="*">
               <NotFound />
