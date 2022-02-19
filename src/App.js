@@ -10,6 +10,7 @@ import { sendData, getExpenses } from "./store/expense-actions";
 import { sendSalaryData, getSalary } from "./store/salary-actions";
 import { sendJournalData, getJournal } from "./store/journal-actions";
 import { sendEquityData, getEquity } from "./store/equity-actions";
+import { sendHoldingData, getHolding } from "./store/holding-actions";
 import { useDispatch } from "react-redux";
 
 let isInitial = true;
@@ -20,6 +21,7 @@ function App() {
   const ManageSalary = React.lazy(() => import("./pages/ManageSalary"));
   const StockJournal = React.lazy(() => import("./pages/StockJournal"));
   const ManageEquity = React.lazy(() => import("./pages/ManageEquity"));
+  const ManageHolding = React.lazy(() => import("./pages/ManageHolding"));
 
   const expenses = useSelector((state) => state.expense.expenses);
   const change = useSelector((state) => state.expense.change);
@@ -27,9 +29,11 @@ function App() {
   const salaries = useSelector((state) => state.salary.salaries);
   const journals = useSelector((state) => state.journal.journals);
   const equities = useSelector((state) => state.equity.equities);
+  const holdings = useSelector((state) => state.holding.holdings);
   const isSalaryUpdate = useSelector((state) => state.salary.isSalaryUpdate);
   const isJournalUpdate = useSelector((state) => state.journal.isJournalUpdate);
   const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
+  const isHoldingUpdate = useSelector((state) => state.holding.change);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -42,6 +46,7 @@ function App() {
     dispatch(getSalary());
     dispatch(getJournal());
     dispatch(getEquity());
+    dispatch(getHolding());
   }, [dispatch]);
 
   useEffect(() => {
@@ -64,7 +69,7 @@ function App() {
     }
   }, [salaries, isSalaryUpdate]);
 
- useEffect(() => {
+  useEffect(() => {
     if (isInitial) {
       isInitial = false;
       return;
@@ -83,6 +88,16 @@ function App() {
       dispatch(sendEquityData(equities));
     }
   }, [equities, isEquityUpdate]);
+
+  useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    if (isHoldingUpdate) {
+      dispatch(sendHoldingData(holdings));
+    }
+  }, [holdings, isHoldingUpdate]);
   // useEffect(() => {
   //   console.log("isLoggedIn")
   //   console.log(isLoggedIn)
@@ -117,11 +132,14 @@ function App() {
             <Route path="/manage-salary" exact>
               {isLoggedIn ? <ManageSalary /> : <Redirect to="/login" />}
             </Route>
-             <Route path="/manage-journal" exact>
+            <Route path="/manage-journal" exact>
               {isLoggedIn ? <StockJournal /> : <Redirect to="/login" />}
             </Route>
-               <Route path="/manage-equity" exact>
+            <Route path="/manage-equity" exact>
               {isLoggedIn ? <ManageEquity /> : <Redirect to="/login" />}
+            </Route>
+            <Route path="/manage-holding" exact>
+              {isLoggedIn ? <ManageHolding /> : <Redirect to="/login" />}
             </Route>
             <Route path="*">
               <NotFound />

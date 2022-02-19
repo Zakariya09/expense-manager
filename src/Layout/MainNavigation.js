@@ -20,7 +20,7 @@ const headersData = [
     label: "Manage Expense",
     href: "/manageExpense",
   },
-   {
+  {
     label: "Manage Salary",
     href: "/manage-salary",
   },
@@ -28,13 +28,17 @@ const headersData = [
     label: "Halal Check",
     href: "/halalCheck",
   },
-   {
+  {
     label: "Manage Journal",
     href: "/manage-journal",
   },
   {
     label: "Manage Equity",
     href: "/manage-equity",
+  },
+  {
+    label: "Manage Holding",
+    href: "/manage-holding",
   },
   {
     label: "Logout",
@@ -93,7 +97,7 @@ export default function Header() {
       isLoggedIn: Object.keys(userObj).length !== 0,
     }));
   }, [userObj]);
-  const { mobileView, drawerOpen} = state;
+  const { mobileView, drawerOpen } = state;
 
   useEffect(() => {
     const setResponsiveness = () => {
