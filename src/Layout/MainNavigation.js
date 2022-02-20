@@ -14,43 +14,55 @@ import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/auth-slice";
-
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import MenuBookIcon from "@material-ui/icons/MenuBook";
+import DonutSmallIcon from "@material-ui/icons/DonutSmall";
+import AssessmentIcon from "@material-ui/icons/Assessment";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 const headersData = [
   {
     label: "Manage Expense",
     href: "/manageExpense",
+    icon: <AccountBalanceWalletIcon />,
   },
   {
     label: "Manage Salary",
     href: "/manage-salary",
+    icon: <MonetizationOnIcon />,
   },
   {
     label: "Halal Check",
     href: "/halalCheck",
+    icon: <AssignmentTurnedInIcon />,
   },
   {
     label: "Manage Journal",
     href: "/manage-journal",
+    icon: <MenuBookIcon />,
   },
   {
     label: "Manage Equity",
     href: "/manage-equity",
+    icon: <DonutSmallIcon />,
   },
   {
     label: "Manage Holding",
     href: "/manage-holding",
+    icon: <AssessmentIcon />,
   },
   {
     label: "Logout",
     href: "/logout",
+    icon: <ExitToAppIcon />,
   },
 ];
 
 const useStyles = makeStyles(() => ({
   header: {
     backgroundColor: "#400CCC",
-    paddingRight: "79px",
-    paddingLeft: "118px",
     "@media (max-width: 900px)": {
       paddingLeft: 0,
     },
@@ -60,6 +72,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
     color: "#FFFEFE",
     textAlign: "left",
+    textTransform: "capitalize",
   },
   menuButton: {
     fontFamily: "Open Sans, sans-serif",
@@ -72,17 +85,33 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
   },
   drawerContainer: {
-    padding: "20px 30px",
+    padding: "5px 13px",
+  },
+  drawerCloseIcon: {
+    display: "flex",
+    justifyContent: "end",
+  },
+  alignLabel: {
+    marginLeft: "12px",
   },
 }));
 
 export default function Header() {
-  const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
+  const {
+    header,
+    logo,
+    menuButton,
+    toolbar,
+    drawerContainer,
+    drawerCloseIcon,
+    alignLabel,
+  } = useStyles();
   let history = useHistory();
   const [state, setState] = useState({
     mobileView: true,
     drawerOpen: false,
     isLoggedIn: false,
+    pageTitle: "",
   });
   const dispatch = useDispatch();
   const userObj = useSelector((state) => state.auth.userObj);
@@ -106,23 +135,16 @@ export default function Header() {
         : setState((prevState) => ({ ...prevState, mobileView: false }));
     };
 
-    // setResponsiveness();
+    let url = window.location.href;
+    let pageTitle = url.split("/").reverse()[0].replace("-", " ");
+    setState((prevState) => ({
+      ...prevState,
+      pageTitle: pageTitle,
+    }));
 
-    // window.addEventListener("resize", () => setResponsiveness());
-
-    // return () => {
-    //   window.removeEventListener("resize", () => setResponsiveness());
-    // };
-  }, []);
-
-  const displayDesktop = () => {
-    return (
-      <Toolbar className={toolbar}>
-        {femmecubatorLogo}
-        <div>{getMenuButtons()}</div>
-      </Toolbar>
-    );
-  };
+    console.log("url");
+    console.log(pageTitle);
+  }, [window.location.href]);
 
   const displayMobile = () => {
     const handleDrawerOpen = () =>
@@ -151,10 +173,15 @@ export default function Header() {
             onClose: handleDrawerClose,
           }}
         >
-          <div className={drawerContainer}>{getDrawerChoices()}</div>
+          <div className={drawerContainer}>
+            <div onClick={handleDrawerClose} className={drawerCloseIcon}>
+              <ChevronLeftIcon />
+            </div>
+            {getDrawerChoices()}
+          </div>
         </Drawer>
 
-        <div>{femmecubatorLogo}</div>
+        <div>{title}</div>
       </Toolbar>
     );
   };
@@ -170,7 +197,7 @@ export default function Header() {
     }
   };
   const getDrawerChoices = () => {
-    return headersData.map(({ label, href }) => {
+    return headersData.map(({ label, icon, href }) => {
       return (
         <div
           {...{
@@ -182,41 +209,25 @@ export default function Header() {
           }}
         >
           {isLoggedIn ? (
-            <MenuItem onClick={() => logoutApp(label)}>{label}</MenuItem>
+            <MenuItem onClick={() => logoutApp(label)}>
+              {icon}
+              <span className={alignLabel}> {label}</span>
+            </MenuItem>
           ) : null}
         </div>
       );
     });
   };
 
-  const femmecubatorLogo = (
+  const title = (
     <Typography variant="h6" component="h1" className={logo}>
-      Halal Check
+      {state.pageTitle}
     </Typography>
   );
 
-  const getMenuButtons = () => {
-    return headersData.map(({ label, href }) => {
-      return isLoggedIn ? (
-        <Button
-          {...{
-            key: label,
-            color: "inherit",
-            className: menuButton,
-          }}
-          onClick={() => logoutApp(label)}
-        >
-          {label}
-        </Button>
-      ) : null;
-    });
-  };
-
   return (
     <header>
-      <AppBar className={header}>
-        {mobileView ? displayMobile() : displayDesktop()}
-      </AppBar>
+      <AppBar className={header}>{mobileView && displayMobile()}</AppBar>
     </header>
   );
 }
