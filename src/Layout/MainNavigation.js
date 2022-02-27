@@ -37,6 +37,7 @@ const headersData = [
     label: "Halal Check",
     href: "/halalCheck",
     icon: <AssignmentTurnedInIcon />,
+    active: true,
   },
   {
     label: "Manage Journal",
@@ -94,6 +95,16 @@ const useStyles = makeStyles(() => ({
   alignLabel: {
     marginLeft: "12px",
   },
+  activeLink: {
+    textDecoration: "none",
+    background: "#400CCC",
+    color: "white",
+    fontWeight: "bold",
+    borderRadius: "5px",
+    "&:hover": {
+      background: "#5f3fb3",
+    },
+  },
 }));
 
 export default function Header() {
@@ -105,6 +116,7 @@ export default function Header() {
     drawerContainer,
     drawerCloseIcon,
     alignLabel,
+    activeLink,
   } = useStyles();
   let history = useHistory();
   const [state, setState] = useState({
@@ -141,9 +153,6 @@ export default function Header() {
       ...prevState,
       pageTitle: pageTitle,
     }));
-
-    console.log("url");
-    console.log(pageTitle);
   }, [window.location.href]);
 
   const displayMobile = () => {
@@ -185,9 +194,15 @@ export default function Header() {
       </Toolbar>
     );
   };
-  const logoutApp = (data) => {
-    console.log("data");
-    console.log(data);
+  const logoutApp = (data, linkIndex) => {
+    headersData.map((item, index) => {
+      if (index === linkIndex) {
+        item.active = true;
+      } else {
+        item.active = false;
+      }
+    });
+
     if (data === "Logout") {
       localStorage.clear("userObj");
       dispatch(logout());
@@ -195,9 +210,10 @@ export default function Header() {
     } else if (data !== undefined) {
       history.push(`/${data.toLowerCase().replace(/\s/g, "-")}`);
     }
+    setState((prevState) => ({ ...prevState, drawerOpen: false }));
   };
   const getDrawerChoices = () => {
-    return headersData.map(({ label, icon, href }) => {
+    return headersData.map(({ label, icon, href, active }, index) => {
       return (
         <div
           {...{
@@ -209,7 +225,10 @@ export default function Header() {
           }}
         >
           {isLoggedIn ? (
-            <MenuItem onClick={() => logoutApp(label)}>
+            <MenuItem
+              className={active ? activeLink : ""}
+              onClick={() => logoutApp(label, index)}
+            >
               {icon}
               <span className={alignLabel}> {label}</span>
             </MenuItem>
