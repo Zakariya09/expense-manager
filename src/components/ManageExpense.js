@@ -22,6 +22,10 @@ import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -278,7 +282,16 @@ const ManageExpense = () => {
 
   return (
     <Fragment>
-      <Grid container>
+     <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography className={classes.heading}>Expense Summary</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid container>
         <Grid item md={2} xs={6} sm={6}>
           <Paper elevation={1} className={classes.totalExpense}>
             <Typography variant="h5" gutterBottom>
@@ -320,6 +333,9 @@ const ManageExpense = () => {
           </Paper>
         </Grid>
       </Grid>
+        </AccordionDetails>
+      </Accordion>
+     
       <Grid container>
         <Grid item md={12} xs={12} sm={12}>
           <div>

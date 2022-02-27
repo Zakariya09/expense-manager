@@ -120,7 +120,6 @@ export default function Header() {
   } = useStyles();
   let history = useHistory();
   const [state, setState] = useState({
-    mobileView: true,
     drawerOpen: false,
     isLoggedIn: false,
     pageTitle: "",
@@ -138,15 +137,9 @@ export default function Header() {
       isLoggedIn: Object.keys(userObj).length !== 0,
     }));
   }, [userObj]);
-  const { mobileView, drawerOpen } = state;
+  const { drawerOpen } = state;
 
   useEffect(() => {
-    const setResponsiveness = () => {
-      return window.innerWidth < 700
-        ? setState((prevState) => ({ ...prevState, mobileView: true }))
-        : setState((prevState) => ({ ...prevState, mobileView: false }));
-    };
-
     let url = window.location.href;
     let pageTitle = url.split("/").reverse()[0].replace("-", " ");
     setState((prevState) => ({
@@ -155,7 +148,7 @@ export default function Header() {
     }));
   }, [window.location.href]);
 
-  const displayMobile = () => {
+  const displayDrawer = () => {
     const handleDrawerOpen = () =>
       setState((prevState) => ({ ...prevState, drawerOpen: true }));
     const handleDrawerClose = () =>
@@ -246,7 +239,7 @@ export default function Header() {
 
   return (
     <header>
-      <AppBar className={header}>{mobileView && displayMobile()}</AppBar>
+      <AppBar className={header}>{displayDrawer()}</AppBar>
     </header>
   );
 }
