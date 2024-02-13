@@ -125,6 +125,7 @@ const ManageEquity = () => {
   };
   const deleteExpense = () => {
     dispatch(removeEquity(data.id));
+    handleDeleteClose();
   };
 
   let formIsValid = false;

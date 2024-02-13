@@ -8,7 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import FormControl from "@material-ui/core/FormControl";
 import { FormHelperText, Button, Divider, TextField } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loggedIn, logout } from "../store/auth-slice";
 
 const useStyles = makeStyles((theme) => ({
@@ -58,7 +58,7 @@ const Auth = (props) => {
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false);
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const nameChangeHandler = (event) => {
     setName(event.target.value);
@@ -80,7 +80,7 @@ const Auth = (props) => {
     if (userObj.userName !== "" && userObj.password !== "") {
       dispatch(loggedIn(userObj));
       localStorage.setItem("userObject", JSON.stringify(userObj));
-      history.replace("/manage-expense");
+      navigate("/manage-expense");
     } else {
       return;
     }

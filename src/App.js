@@ -1,4 +1,4 @@
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, RouterProvider, createBrowserRouter } from "react-router-dom";
 import React, { Fragment, Suspense } from "react";
 import "./App.css";
 import NotFound from "./pages/NotFound";
@@ -12,16 +12,17 @@ import { sendJournalData, getJournal } from "./store/journal-actions";
 import { sendEquityData, getEquity } from "./store/equity-actions";
 import { sendHoldingData, getHolding } from "./store/holding-actions";
 import { useDispatch } from "react-redux";
+import Login from "./pages/Login";
+import ManageExpenseContainer from "./pages/ManageExpense";
+import HalalCheckContainer from "./pages/HalalCheck";
+import ManageSalaryContainer from "./pages/ManageSalary";
+import StockJournalPage from "./pages/StockJournal";
+import ManageEquityContainer from "./pages/ManageEquity";
+import ManageHolding from "./pages/ManageHolding";
+import Root from "./Layout/Root";
 
 let isInitial = true;
 function App() {
-  const LoginComponent = React.lazy(() => import("./pages/Login"));
-  const ManageExpense = React.lazy(() => import("./pages/ManageExpense"));
-  const HalalCheck = React.lazy(() => import("./pages/HalalCheck"));
-  const ManageSalary = React.lazy(() => import("./pages/ManageSalary"));
-  const StockJournal = React.lazy(() => import("./pages/StockJournal"));
-  const ManageEquity = React.lazy(() => import("./pages/ManageEquity"));
-  const ManageHolding = React.lazy(() => import("./pages/ManageHolding"));
 
   const expenses = useSelector((state) => state.expense.expenses);
   const change = useSelector((state) => state.expense.change);
@@ -98,55 +99,25 @@ function App() {
       dispatch(sendHoldingData(holdings));
     }
   }, [holdings, isHoldingUpdate]);
-  // useEffect(() => {
-  //   console.log("isLoggedIn")
-  //   console.log(isLoggedIn)
-  //   console.log("userObj")
-  //   console.log(userObj)
-  //   if (isLoggedIn) {
-  //     localStorage.setItem("userObject", JSON.stringify(userObj));
-  //   }
-  // }, [userObj]);
+  const router = createBrowserRouter([
+    {
+      path: '/', element: <Root />, errorElement: <NotFound />,
+      children: [
+        { path: '/', element: <Login />, errorElement: <NotFound /> },
+        { path: '/login', element: <Login />, errorElement: <NotFound /> },
+        { path: "/manage-expense", element: <ManageExpenseContainer />, errorElement: <NotFound /> },
+        { path: "/halal-check", element: <HalalCheckContainer />, errorElement: <NotFound /> },
+        { path: "/manage-salary", element: <ManageSalaryContainer />, errorElement: <NotFound /> },
+        { path: "/manage-journal", element: <StockJournalPage />, errorElement: <NotFound /> },
+        { path: "/manage-equity", element: <ManageEquityContainer />, errorElement: <NotFound /> },
+        { path: "/manage-holding", element: <ManageHolding />, errorElement: <NotFound /> }
+      ]
+    }
+  ]);
 
   return (
     <Fragment>
-      <Layout>
-        <Suspense fallback={<Loading />}>
-          <Switch>
-            <Route path="/" exact>
-              {isLoggedIn ? (
-                <Redirect to="/halal-check" />
-              ) : (
-                <Redirect to="/login" />
-              )}
-            </Route>
-            <Route path="/login">
-              <LoginComponent />
-            </Route>
-            <Route path="/manage-expense" exact>
-              {isLoggedIn ? <ManageExpense /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/halal-check" exact>
-              {isLoggedIn ? <HalalCheck /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/manage-salary" exact>
-              {isLoggedIn ? <ManageSalary /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/manage-journal" exact>
-              {isLoggedIn ? <StockJournal /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/manage-equity" exact>
-              {isLoggedIn ? <ManageEquity /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="/manage-holding" exact>
-              {isLoggedIn ? <ManageHolding /> : <Redirect to="/login" />}
-            </Route>
-            <Route path="*">
-              <NotFound />
-            </Route>
-          </Switch>
-        </Suspense>
-      </Layout>
+      <RouterProvider router={router} />
     </Fragment>
   );
 }

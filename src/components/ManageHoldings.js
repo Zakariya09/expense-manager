@@ -129,6 +129,7 @@ const ManageHoldings = () => {
   };
   const deleteExpense = () => {
     dispatch(removeHolding(data.id));
+    handleDeleteClose();
   };
 
   let formIsValid = false;

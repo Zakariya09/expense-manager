@@ -212,6 +212,7 @@ const ManageExpense = () => {
   };
   const deleteExpense = () => {
     dispatch(removeExpense(data.id));
+    handleDeleteClose();
   };
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
@@ -235,6 +236,7 @@ const ManageExpense = () => {
 
   const handleDeleteClose = () => {
     setShowDeleteModal(false);
+    console.log("Delete Logged")
   };
   const nameChangeHandler = (event) => {
     setEnteredName(event.target.value);

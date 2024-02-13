@@ -128,6 +128,7 @@ const ManageJournal = () => {
   };
   const deleteExpense = () => {
     dispatch(removeJournal(data.id));
+    handleDeleteClose();
   };
 
   let formIsValid = false;
@@ -144,43 +145,43 @@ const ManageJournal = () => {
   };
 
   const changeHandler = (event, field) => {
-    if(field === "date"){
-        setEnteredDate(event);
+    if (field === "date") {
+      setEnteredDate(event);
     }
-    if(field === "name"){
-        setEnteredStockName(event.target.value);
+    if (field === "name") {
+      setEnteredStockName(event.target.value);
     }
-    if(field === "quantity"){
-        setEnteredQuantity(Number(event.target.value));
+    if (field === "quantity") {
+      setEnteredQuantity(Number(event.target.value));
     }
-    if(field === "entryPrice"){
-        setEnteredEntryPrice(Number(event.target.value));
+    if (field === "entryPrice") {
+      setEnteredEntryPrice(Number(event.target.value));
     }
-    if(field === "exitPrice"){
-        let exitPrice = Number(event.target.value)
-        setEnteredExitPrice(exitPrice);
-         let totalEntryPrice = enteredEntryPrice * enteredQuantity;
-         let totalExitPrice = exitPrice *  enteredQuantity;
-        setEnteredProfitLostAmount(totalExitPrice - totalEntryPrice);
-        setIsProfit(exitPrice > enteredEntryPrice)
+    if (field === "exitPrice") {
+      let exitPrice = Number(event.target.value)
+      setEnteredExitPrice(exitPrice);
+      let totalEntryPrice = enteredEntryPrice * enteredQuantity;
+      let totalExitPrice = exitPrice * enteredQuantity;
+      setEnteredProfitLostAmount(totalExitPrice - totalEntryPrice);
+      setIsProfit(exitPrice > enteredEntryPrice)
     }
-    if(field === "breakdown"){
-        setEnteredBreakdown(Number(event.target.value));
+    if (field === "breakdown") {
+      setEnteredBreakdown(Number(event.target.value));
     }
   };
 
   const formHandler = (event) => {
     event.preventDefault();
-   
+
     const obj = {
-        stockName:enteredStockName,
-        quantity:enteredQuantity,
-        entryPrice:enteredEntryPrice,
-        exitPrice:enteredExitPrice,
-        profitLoss:enteredProfitLostAmount,
-        breakdown: enteredBreakdown,
-        date: moment(enteredDate).format("DD-MM-YYYY"),
-        isProfit: isProfit
+      stockName: enteredStockName,
+      quantity: enteredQuantity,
+      entryPrice: enteredEntryPrice,
+      exitPrice: enteredExitPrice,
+      profitLoss: enteredProfitLostAmount,
+      breakdown: enteredBreakdown,
+      date: moment(enteredDate).format("DD-MM-YYYY"),
+      isProfit: isProfit
     };
     dispatch(addJournal(obj));
 
@@ -209,7 +210,7 @@ const ManageJournal = () => {
           <section className={expenseClasses.tableSection}>
             <Table rows={rows} columns={columns} handleDelete={handleDelete} />
           </section>
-           <Modal
+          <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             className={classes.modal}
@@ -245,7 +246,7 @@ const ManageJournal = () => {
                               id="date"
                               label="Date"
                               format="MM/dd/yyyy"
-                              onChange={(e)=>changeHandler(e, "date")}
+                              onChange={(e) => changeHandler(e, "date")}
                               style={{ width: "100%" }}
                               variant="outlined"
                               value={enteredDate}
@@ -256,14 +257,14 @@ const ManageJournal = () => {
                           </Grid>
                         </MuiPickersUtilsProvider>
                       </Grid>
-                    <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={6} lg={6} xs={12} sm={12}>
                         <TextField
                           label="Stock Name"
                           id="name"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "name")}
+                          onChange={(e) => changeHandler(e, "name")}
                           value={enteredStockName}
                         />
                       </Grid>
@@ -274,7 +275,7 @@ const ManageJournal = () => {
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                         onChange={(e)=>changeHandler(e, "quantity")}
+                          onChange={(e) => changeHandler(e, "quantity")}
                           value={enteredQuantity}
                           type="number"
                           min="1"
@@ -288,7 +289,7 @@ const ManageJournal = () => {
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "entryPrice")}
+                          onChange={(e) => changeHandler(e, "entryPrice")}
                           value={enteredEntryPrice}
                           type="number"
                           min="1"
@@ -302,7 +303,7 @@ const ManageJournal = () => {
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "exitPrice")}
+                          onChange={(e) => changeHandler(e, "exitPrice")}
                           value={enteredExitPrice}
                           type="number"
                           min="1"
@@ -316,7 +317,7 @@ const ManageJournal = () => {
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "profitLost")}
+                          onChange={(e) => changeHandler(e, "profitLost")}
                           value={enteredProfitLostAmount}
                           type="number"
                           min="1"
@@ -331,7 +332,7 @@ const ManageJournal = () => {
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "breakdown")}
+                          onChange={(e) => changeHandler(e, "breakdown")}
                           value={enteredBreakdown}
                           type="number"
                           min="1"

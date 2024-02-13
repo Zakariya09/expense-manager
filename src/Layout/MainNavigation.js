@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/auth-slice";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -118,7 +118,7 @@ export default function Header() {
     alignLabel,
     activeLink,
   } = useStyles();
-  let history = useHistory();
+  let navigate = useNavigate();
   const [state, setState] = useState({
     drawerOpen: false,
     isLoggedIn: false,
@@ -131,8 +131,8 @@ export default function Header() {
     localStorage.getItem("userObject") &&
     Object.keys(JSON.parse(localStorage.getItem("userObject"))).length !== 0;
 
-  useEffect(async () => {
-    await setState((prevState) => ({
+  useEffect(() => {
+    setState((prevState) => ({
       ...prevState,
       isLoggedIn: Object.keys(userObj).length !== 0,
     }));
@@ -196,12 +196,13 @@ export default function Header() {
       }
     });
 
+    console.log(data)
     if (data === "Logout") {
       localStorage.clear("userObj");
       dispatch(logout());
-      history.push("/login");
+      navigate("/login");
     } else if (data !== undefined) {
-      history.push(`/${data.toLowerCase().replace(/\s/g, "-")}`);
+      navigate(`/${data.toLowerCase().replace(/\s/g, "-")}`);
     }
     setState((prevState) => ({ ...prevState, drawerOpen: false }));
   };

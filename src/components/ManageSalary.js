@@ -120,6 +120,7 @@ const ManageSalary = () => {
   };
   const deleteExpense = () => {
     dispatch(removeSalary(data.id));
+    handleDeleteClose();
   };
   const enteredAmountIsValid = enteredAmount.trim() !== "";
   const enteredAmountIsInvalid =
