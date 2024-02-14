@@ -1,3 +1,4 @@
+import { baseUrl } from "../common/AppConstants";
 import {updateExpenses} from "./expense-slice";
 
 
@@ -6,7 +7,7 @@ export const sendData = (expenses) => {
     return async () => {
       const sendRequest = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/expenses.json",
+          `${baseUrl}/expenses.json`,
           {
             method: "PUT",
             body: JSON.stringify(expenses),
@@ -31,8 +32,7 @@ export const sendData = (expenses) => {
     return async (dispatch) => {
       const fetchData = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/expenses.json"
-        );
+          `${baseUrl}/expenses.json`);
   
         if (!response.ok) {
           throw new Error("Fetching Data Failed!");

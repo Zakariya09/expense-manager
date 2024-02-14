@@ -3,10 +3,8 @@ import {
   Toolbar,
   Typography,
   makeStyles,
-  Button,
   IconButton,
   Drawer,
-  Link,
   MenuItem,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -63,7 +61,10 @@ const headersData = [
 
 const useStyles = makeStyles(() => ({
   header: {
-    backgroundColor: "#400CCC",
+    background: '#780206',
+    background: '-webkit-linear-gradient(to left, #061161, #780206)',
+    background: 'linear-gradient(to left, #780206, #061161)',
+
     "@media (max-width: 900px)": {
       paddingLeft: 0,
     },
@@ -97,7 +98,7 @@ const useStyles = makeStyles(() => ({
   },
   activeLink: {
     textDecoration: "none",
-    background: "#400CCC",
+    background: "#061161",
     color: "white",
     fontWeight: "bold",
     borderRadius: "5px",
@@ -105,6 +106,12 @@ const useStyles = makeStyles(() => ({
       background: "#5f3fb3",
     },
   },
+  paper: {
+    color: 'white',
+    background: '#780206',
+    background: '-webkit-linear-gradient(to left, #061161, #780206)',
+    background: 'linear-gradient(to left, #780206, #060a29)',
+  }
 }));
 
 export default function Header() {
@@ -117,6 +124,7 @@ export default function Header() {
     drawerCloseIcon,
     alignLabel,
     activeLink,
+    paper
   } = useStyles();
   let navigate = useNavigate();
   const [state, setState] = useState({
@@ -149,13 +157,15 @@ export default function Header() {
   }, [window.location.href]);
 
   const displayDrawer = () => {
-    const handleDrawerOpen = () =>
-      setState((prevState) => ({ ...prevState, drawerOpen: true }));
+    const handleDrawerOpen = () => {
+      setState((prevState) => ({ ...prevState, drawerOpen: true }))
+    };
+
     const handleDrawerClose = () =>
       setState((prevState) => ({ ...prevState, drawerOpen: false }));
 
-    return (
-      <Toolbar>
+    return <React.Fragment>
+      {localStorage.getItem("userObject") ? <Toolbar>
         <IconButton
           {...{
             edge: "start",
@@ -174,6 +184,9 @@ export default function Header() {
             open: drawerOpen,
             onClose: handleDrawerClose,
           }}
+          classes={{
+            paper: paper
+          }}
         >
           <div className={drawerContainer}>
             <div onClick={handleDrawerClose} className={drawerCloseIcon}>
@@ -185,7 +198,10 @@ export default function Header() {
 
         <div>{title}</div>
       </Toolbar>
-    );
+        :
+        null
+      }
+    </React.Fragment>
   };
   const logoutApp = (data, linkIndex) => {
     headersData.map((item, index) => {
@@ -199,6 +215,7 @@ export default function Header() {
     console.log(data)
     if (data === "Logout") {
       localStorage.clear("userObj");
+      localStorage.clear("userObject");
       dispatch(logout());
       navigate("/login");
     } else if (data !== undefined) {

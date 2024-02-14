@@ -1,10 +1,11 @@
+import { baseUrl } from "../common/AppConstants";
 import {updateSalary} from "./salary-slice";
 
 export const sendSalaryData = (salaries) => {
     return async () => {
       const sendRequest = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/salaries.json",
+          `${baseUrl}/salaries.json`,
           {
             method: "PUT",
             body: JSON.stringify(salaries),
@@ -29,8 +30,7 @@ export const sendSalaryData = (salaries) => {
     return async (dispatch) => {
       const fetchData = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/salaries.json"
-        );
+          `${baseUrl}/salaries.json`);
   
         if (!response.ok) {
           throw new Error("Fetching Data Failed!");

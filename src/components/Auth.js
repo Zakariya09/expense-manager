@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,6 +11,8 @@ import { FormHelperText, Button, Divider, TextField } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import { loggedIn, logout } from "../store/auth-slice";
 
+import AppAlert from "../common/Alert";
+import { appStrings, errors, loginpUrl, signupUrl } from "../common/AppConstants";
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
@@ -48,6 +50,32 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     marginTop: "5%",
   },
+  action: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '& button': {
+      width: '81%'
+    },
+    '& p:hover': {
+      color: 'blue',
+      fontWeight: '500',
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    }
+  },
+  gradientFont: {
+    background: 'linear-gradient(to right, #780206, #061161)',
+    backgroundClip: 'text',
+    '-webkitTextFillColor': 'transparent',
+    fontSize: '2rem',
+    fontWeight: '600',
+  },
+  mtTop5: {
+    marginTop: "5%",
+    background: 'linear-gradient(to right, #780206, #061161)',
+  }
 }));
 
 const Auth = (props) => {
@@ -58,6 +86,9 @@ const Auth = (props) => {
   const [password, setPassword] = useState("");
   const [emailIsInvalid, setEmailIsInvalid] = useState(false);
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
+  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [isSignup, setIsSignup] = useState(false);
+
   const navigate = useNavigate();
 
   const nameChangeHandler = (event) => {
@@ -67,42 +98,49 @@ const Auth = (props) => {
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
   };
-  const submitHandler = (event) => {
+
+  const submitHandler = async (event) => {
     event.preventDefault();
     const userObj = {
       userName,
       password,
+      isSignup
     };
 
-    console.log("userObj");
-    console.log(userObj);
-
-    if (userObj.userName !== "" && userObj.password !== "") {
-      dispatch(loggedIn(userObj));
-      localStorage.setItem("userObject", JSON.stringify(userObj));
-      navigate("/manage-expense");
-    } else {
-      return;
-    }
-
-    // let response = dispatch({ type: "login", data: userObj });
-    // console.log("response");
-    // console.log(response);
+    await fetch(isSignup ? signupUrl : loginpUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        email: userName,
+        password,
+        returnSecureToken: true
+      })
+    }).then(async (response) => {
+      const data = await response.json();
+      if (response.ok) {
+        dispatch(loggedIn(userObj));
+        localStorage.setItem("userObject", JSON.stringify(userObj));
+        navigate("/manage-expense");
+      } else {
+        setAlert(prevState => ({ show: true, type: 'error', message: errors[data.error.message] }));
+      }
+    }).catch((error) => {
+      setAlert(prevState => ({ show: true, type: 'error', message: errors['ERR_CONNECTION'] }));
+    });
   };
+
   return (
     <Fragment>
-      <div className={`${classes.alignCenter} ${classes.mtTop} `}>
-        <Card className={`${classes.root} ${classes.cardWidth} `}>
+      <div className={`${classes.alignCenter} ${classes.mtTop}`}>
+        <Card className={`${classes.root} ${classes.cardWidth}`}>
           <CardContent>
             <Typography
               variant="h5"
               component="h2"
-              className={classes.alignCenter}
+              className={`${classes.alignCenter} ${classes.gradientFont}`}
             >
-              Login
+              {appStrings.appName}
             </Typography>
-            <Divider className={classes.mtTop}></Divider>
-
+            <Divider className={classes.mtTop5}></Divider>
             <form
               onSubmit={submitHandler}
               className={classes.alignCard}
@@ -121,7 +159,7 @@ const Auth = (props) => {
                 />
                 {emailIsInvalid && (
                   <FormHelperText id="my-helper-text">
-                    Please enter the correct username.
+                    {appStrings.usernameWarningText}
                   </FormHelperText>
                 )}
               </FormControl>
@@ -140,21 +178,25 @@ const Auth = (props) => {
                 />
                 {passwordIsInvalid && (
                   <FormHelperText id="password">
-                    Please enter the correct password.
+                    {appStrings.passwordWarningText}
                   </FormHelperText>
                 )}
               </FormControl>
               <CardActions className={classes.alignCenter}>
-                <div className={classes.root}>
+                <div className={`${classes.root} ${classes.action}`}>
                   <Button type="submit" variant="contained" color="primary">
-                    Login
+                    {isSignup ? `${appStrings.signup}` : `${appStrings.login}`}
                   </Button>
+                  <FormHelperText id="my-helper-text" onClick={() => { setIsSignup(!isSignup) }}>
+                    {isSignup ? `${appStrings.existingUserText}` : `${appStrings.signupUserText}`}
+                  </FormHelperText>
                 </div>
               </CardActions>
             </form>
           </CardContent>
         </Card>
       </div>
+      <AppAlert alert={alert} />
     </Fragment>
   );
 };

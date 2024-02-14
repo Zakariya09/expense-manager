@@ -1,10 +1,11 @@
+import { baseUrl } from "../common/AppConstants";
 import { updateHolding } from "./holding-slice";
 
 export const sendHoldingData = (holdings) => {
   return async () => {
     const sendRequest = async () => {
       const response = await fetch(
-        "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/holdings.json",
+        `${baseUrl}/holdings.json`,
         {
           method: "PUT",
           body: JSON.stringify(holdings),
@@ -29,8 +30,7 @@ export const getHolding = () => {
   return async (dispatch) => {
     const fetchData = async () => {
       const response = await fetch(
-        "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/holdings.json"
-      );
+        `${baseUrl}/holdings.json`);
 
       if (!response.ok) {
         throw new Error("Fetching Data Failed!");

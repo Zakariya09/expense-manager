@@ -1,10 +1,11 @@
+import { baseUrl } from "../common/AppConstants";
 import {updateJournal} from "./journal-slice";
 
 export const sendJournalData = (journals) => {
     return async () => {
       const sendRequest = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/journals.json",
+          `${baseUrl}/journals.json`,
           {
             method: "PUT",
             body: JSON.stringify(journals),
@@ -29,8 +30,7 @@ export const sendJournalData = (journals) => {
     return async (dispatch) => {
       const fetchData = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/journals.json"
-        );
+          `${baseUrl}/journals.json`);
   
         if (!response.ok) {
           throw new Error("Fetching Data Failed!");

@@ -1,9 +1,7 @@
 import { Route, RouterProvider, createBrowserRouter } from "react-router-dom";
-import React, { Fragment, Suspense } from "react";
+import React, { Fragment } from "react";
 import "./App.css";
 import NotFound from "./pages/NotFound";
-import Loading from "./pages/Laodign";
-import Layout from "./Layout/Layout";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { sendData, getExpenses } from "./store/expense-actions";

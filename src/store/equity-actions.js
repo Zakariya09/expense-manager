@@ -1,10 +1,11 @@
+import { baseUrl } from "../common/AppConstants";
 import {updateEquity} from "./equity-slice";
 
 export const sendEquityData = (equities) => {
     return async () => {
       const sendRequest = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/equities.json",
+          `${baseUrl}/equities.json`,
           {
             method: "PUT",
             body: JSON.stringify(equities),
@@ -29,8 +30,7 @@ export const sendEquityData = (equities) => {
     return async (dispatch) => {
       const fetchData = async () => {
         const response = await fetch(
-          "https://expense-manager-react-e031e-default-rtdb.firebaseio.com/equities.json"
-        );
+          `${baseUrl}/equities.json`);
   
         if (!response.ok) {
           throw new Error("Fetching Data Failed!");
