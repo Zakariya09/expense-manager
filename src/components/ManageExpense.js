@@ -15,10 +15,9 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { addExpense, removeExpense } from "../store/expense-slice";
 import moment from "moment";
-import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -27,6 +26,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { appStrings, expenseGridColumn } from "../common/AppConstants";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -178,8 +178,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ManageExpense = () => {
-  const rows = useSelector((state) => state.expense.expenses);
+const ManageExpense = (props) => {
+  const rows = props.tableRows;
   let totalAmount = 0;
   let currentMonthExpense = 0;
   let currentMonth = new Date().getMonth() + 1;
@@ -202,10 +202,9 @@ const ManageExpense = () => {
   const [enteredAmountIsTouched, setEnteredAmountIsTouched] = React.useState(false);
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
   const [data, setData] = React.useState({});
-  const isLoading = useSelector((state) => state.expense.isLoading);
+  const isLoading = props.isLoading;
   const [isUpdate, setIsUpdate] = useState(false);
   const [expenseRecord, setExpenseRecord] = React.useState([]);
-  const dispatch = useDispatch();
 
   const enteredNameIsValid = enteredName.trim() !== "";
   const enteredNameIsInvalid = !enteredNameIsValid && enteredNameIsTouched;
@@ -218,7 +217,7 @@ const ManageExpense = () => {
   if (enteredNameIsValid && enteredAmountIsValid && enteredDateIsValid) {
     formIsValid = true;
   }
-  
+
   useEffect(() => {
     if (!isLoading) {
       setOpen(false);
@@ -233,9 +232,9 @@ const ManageExpense = () => {
   };
 
   const deleteExpense = () => {
-    dispatch(removeExpense(data.id));
+    props.removeExpense(data.id);
   };
-  
+
   const handleOpen = () => {
     setIsUpdate(false);
     resetForm();
@@ -274,7 +273,7 @@ const ManageExpense = () => {
   const dateChangeHandler = (event) => {
     setEnteredDate(event);
   };
-  
+
   const dateBlurHandler = (event) => {
     setEnteredDateIsTouched(true);
   };
@@ -302,7 +301,7 @@ const ManageExpense = () => {
       ...(isUpdate && { id: data.id })
     };
 
-    dispatch(addExpense({ obj, isUpdate }));
+    props.addExpense({ obj, isUpdate });
     setEnteredName("");
     setEnteredNameIsTouched(false);
     setEnteredAmount("");
@@ -585,4 +584,19 @@ const ManageExpense = () => {
   );
 };
 
-export default ManageExpense;
+const mapStateToProp = (state) => {
+  return {
+    tableRows: state.expense.expenses,
+    isLoading: state.expense.isLoading
+  }
+}
+
+const mapDispatchToProp = (dispatch) => {
+  return {
+    removeExpense: (id) => dispatch(removeExpense(id)),
+    addExpense: (obj) => dispatch(addExpense(obj))
+  }
+
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(ManageExpense)
