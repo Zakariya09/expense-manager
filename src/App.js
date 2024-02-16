@@ -4,7 +4,7 @@ import "./App.css";
 import NotFound from "./pages/NotFound";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
-import { sendData, getExpenses } from "./store/expense-actions";
+import { saveExpense, getExpenses, deleteExpense } from "./store/expense-actions";
 import { sendSalaryData, getSalary } from "./store/salary-actions";
 import { sendJournalData, getJournal } from "./store/journal-actions";
 import { sendEquityData, getEquity } from "./store/equity-actions";
@@ -23,7 +23,7 @@ let isInitial = true;
 function App() {
 
   const expenses = useSelector((state) => state.expense.expenses);
-  const change = useSelector((state) => state.expense.change);
+  const isExpenseUpdate = useSelector((state) => state.expense.change);
   const userObj = useSelector((state) => state.auth.userObj);
   const salaries = useSelector((state) => state.salary.salaries);
   const journals = useSelector((state) => state.journal.journals);
@@ -33,6 +33,7 @@ function App() {
   const isJournalUpdate = useSelector((state) => state.journal.isJournalUpdate);
   const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
   const isHoldingUpdate = useSelector((state) => state.holding.change);
+  const expenseState = useSelector((state) => state.expense);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -53,10 +54,15 @@ function App() {
       isInitial = false;
       return;
     }
-    if (change) {
-      dispatch(sendData(expenses));
+
+    if (expenseState.action == 'delete') {
+      dispatch(deleteExpense(expenseState.selectedExpense));
     }
-  }, [expenses, change]);
+
+    if (expenseState.action == 'save') {
+      dispatch(saveExpense(expenseState.selectedExpense, expenseState.isUpdate));
+    }
+  }, [expenses, isExpenseUpdate]);
 
   useEffect(() => {
     if (isInitial) {

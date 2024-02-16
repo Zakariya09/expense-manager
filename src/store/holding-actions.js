@@ -1,8 +1,9 @@
 import { baseUrl } from "../common/AppConstants";
+import { showAlert } from "./expense-slice";
 import { updateHolding } from "./holding-slice";
 
 export const sendHoldingData = (holdings) => {
-  return async () => {
+  return async (dispatch) => {
     const sendRequest = async () => {
       const response = await fetch(
         `${baseUrl}/holdings.json`,
@@ -12,8 +13,6 @@ export const sendHoldingData = (holdings) => {
         }
       );
       const responseData = await response.json();
-      console.log("holdings");
-      console.log(responseData);
       if (!response.ok) {
         throw new Error("Sending Data Failed!");
       }
@@ -21,7 +20,7 @@ export const sendHoldingData = (holdings) => {
     try {
       await sendRequest();
     } catch (error) {
-      console.log(error);
+        dispatch(showAlert());
     }
   };
 };
@@ -44,10 +43,8 @@ export const getHolding = () => {
     };
     try {
       const response = await fetchData();
-      console.log("response");
-      console.log(response);
     } catch (error) {
-      console.log(error);
+        dispatch(showAlert());
     }
   };
 };

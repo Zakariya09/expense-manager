@@ -61,10 +61,7 @@ const headersData = [
 
 const useStyles = makeStyles(() => ({
   header: {
-    background: '#780206',
-    background: '-webkit-linear-gradient(to left, #061161, #780206)',
     background: 'linear-gradient(to left, #780206, #061161)',
-
     "@media (max-width: 900px)": {
       paddingLeft: 0,
     },

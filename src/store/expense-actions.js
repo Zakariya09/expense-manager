@@ -1,56 +1,90 @@
 import { baseUrl } from "../common/AppConstants";
-import {updateExpenses} from "./expense-slice";
+import { showAlert, hideLoader, getExpense, resetState } from "./expense-slice";
 
-
- 
-export const sendData = (expenses) => {
-    return async () => {
-      const sendRequest = async () => {
-        const response = await fetch(
-          `${baseUrl}/expenses.json`,
-          {
-            method: "PUT",
-            body: JSON.stringify(expenses),
-          }
-        );
-        const responseData = await response.json();
-        console.log("responseData");
-        console.log(responseData);
-        if (!response.ok) {
-          throw new Error("Sending Data Failed!");
+export const saveExpense = (expense, isUpdate) => {
+  let url = `${baseUrl}/expenses.json`;
+  let method = 'POST';
+  if (isUpdate) {
+    url = `${baseUrl}/expenses/${expense.id}.json`;
+    method = 'PUT';
+  }
+  return async (dispatch) => {
+    const sendRequest = async () => {
+      const response = await fetch(
+        url,
+        {
+          method: method,
+          body: JSON.stringify(expense),
         }
-      };
-      try {
-        await sendRequest();
-      } catch (error) {
-        console.log(error);
+      );
+      const responseData = await response.json();
+      dispatch(hideLoader())
+      if (!response.ok) {
+        throw new Error("Sending Data Failed!");
       }
     };
+    try {
+      await sendRequest();
+      await dispatch(getExpenses());
+    } catch (error) {
+      dispatch(showAlert())
+      dispatch(hideLoader());
+      dispatch(resetState());
+    }
   };
-  
-  export const getExpenses = () => {
-    return async (dispatch) => {
-      const fetchData = async () => {
-        const response = await fetch(
-          `${baseUrl}/expenses.json`);
-  
-        if (!response.ok) {
-          throw new Error("Fetching Data Failed!");
+};
+
+export const getExpenses = () => {
+  return async (dispatch) => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `${baseUrl}/expenses.json`);
+
+      if (!response.ok) {
+        throw new Error("Fetching Data Failed!");
+      }
+      const resp = await response.json();
+
+      const expenseArr = [];
+      for (const key in resp) {
+        if (resp.hasOwnProperty(key)) {
+          expenseArr.push({ id: key, ...resp[key] })
         }
-        const data = await response.json();
-        data.map((item, index)=>{
-          item.id = index;
-        })
-        dispatch(updateExpenses(data))
-        return data;
-      };
-      try {
-        const response = await fetchData();
-        console.log("response");
-        console.log(response);
-      } catch (error) {
-        console.log(error);
+      }
+      return expenseArr;
+    };
+    try {
+      const response = await fetchData();
+      dispatch(getExpense(response))
+    } catch (error) {
+      dispatch(showAlert());
+      dispatch(resetState());
+    }
+  };
+};
+
+export const deleteExpense = (expense) => {
+  return async (dispatch) => {
+    const sendRequest = async () => {
+      const response = await fetch(
+        `${baseUrl}/expenses/${expense.id}.json`,
+        {
+          method: "DELETE",
+        }
+      );
+      const responseData = await response.json();
+      dispatch(hideLoader())
+      if (!response.ok) {
+        throw new Error("Sending Data Failed!");
       }
     };
+    try {
+      await sendRequest();
+      await dispatch(getExpenses());
+    } catch (error) {
+      dispatch(showAlert())
+      dispatch(hideLoader());
+      dispatch(resetState());
+    }
   };
-  
+};

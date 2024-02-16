@@ -14,6 +14,13 @@ const errors = {
     'EMAIL_EXISTS': "Looks like you already have an account with us! Try logging in instead."
 }
 
+const expenseGridColumn = [
+    { id: "name", label: "Name", minWidth: 170 },
+    { id: "amount", label: "Amount", minWidth: 100 },
+    { id: "date", label: "Date", minWidth: 100 },
+    { id: "Actions", label: "Actions", minWidth: 10 },
+];
+
 const appStrings = {
     login: 'Login',
     signup: 'Signup',
@@ -21,8 +28,28 @@ const appStrings = {
     passwordWarningText: 'Please enter the correct password.',
     existingUserText: 'Already have an account?',
     signupUserText: 'New user? click here to signup!',
-    appName: 'Expense Manager'
+    appName: 'Expense Manager',
+    expenseSummary: 'Expense Summary',
+    totalExpense: 'Total Expense',
+    expenseThisMonth: 'Expense This Month',
+    totalSavings: 'Total Savings',
+    totalInvested: 'Total Invested',
+    addExpense: 'Add Expense',
+    name: 'Name',
+    enterNameWarningText: 'Please enter name.',
+    amount: 'Amount',
+    amountWarningTest: 'Please enter amount.',
+    date: 'Date',
+    dateWarningText: ' Please Select date.',
+    save: 'Save',
+    cancel: 'Cancel',
+    deleteConfirmText: 'Are you sure wants to delete the record?',
+    deleteWarningText: 'Once deleted, you will not be able to recover this record!',
+    delete: 'Delete',
+    deleteExpense:'Delete Expense',
+    updateExpense:'Update Expense',
+    update:'Update'
 }
 
 
-export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey };
+export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn };

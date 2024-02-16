@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -88,8 +88,12 @@ const Auth = (props) => {
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [isSignup, setIsSignup] = useState(false);
-
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    localStorage.clear("userObj");
+    localStorage.clear("userObject");
+  },[])
 
   const nameChangeHandler = (event) => {
     setName(event.target.value);

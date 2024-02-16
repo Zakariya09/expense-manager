@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import DeleteIcon from "@material-ui/icons/Delete";
-
+import EditIcon from '@material-ui/icons/Create';
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -17,6 +17,14 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
+  danger: {
+    cursor: 'pointer',
+    color: '#780206'
+  },
+  primary:{
+    cursor: 'pointer',
+    color: '#061161'
+  }
 });
 
 export default function StickyHeadTable(props) {
@@ -39,9 +47,9 @@ export default function StickyHeadTable(props) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {props.columns.map((column) => (
+              {props.columns.map((column, index) => (
                 <TableCell
-                  key={column.id}
+                  key={`${index}-tab-cell`}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
@@ -53,32 +61,34 @@ export default function StickyHeadTable(props) {
           <TableBody>
             {props.rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+              .map((row, index) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={`${index}-row`}>
                     {props.columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell key={`${index}-${Math.random()}`} align={column.align}>
                           {column.format && typeof value === "number" ? (
                             column.format(value)
                           ) : value === undefined ? (
-                            <DeleteIcon
-                              aria-label="edit"
-                              onClick={() => props.handleDelete(row)}
-                            />
+                            <Fragment>
+                              <DeleteIcon
+                                aria-label="edit"
+                                className={classes.danger}
+                                onClick={() => props.handleDelete(row)}
+                              />
+                              <EditIcon
+                                aria-label="edit"
+                                className={classes.primary}
+                                onClick={() => props.handleEdit(row)}
+                              />
+                            </Fragment>
                           ) : (
                             value
                           )}
                         </TableCell>
                       );
                     })}
-                    {/* <TableCell>
-                      <DeleteIcon
-                        aria-label="edit"
-                        onClick={() => props.handleEdit(row)}
-                      />
-                    </TableCell> */}
                   </TableRow>
                 );
               })}
