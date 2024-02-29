@@ -26,6 +26,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { appStrings, expenseGridColumn } from "../common/AppConstants";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -365,7 +366,6 @@ const ManageExpense = (props) => {
           </Grid>
         </AccordionDetails>
       </Accordion>
-
       <Grid container>
         <Grid item md={12} xs={12} sm={12}>
           <div>
@@ -518,7 +518,6 @@ const ManageExpense = (props) => {
               </div>
             </Fade>
           </Modal>
-
           <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
@@ -596,7 +595,13 @@ const mapDispatchToProp = (dispatch) => {
     removeExpense: (id) => dispatch(removeExpense(id)),
     addExpense: (obj) => dispatch(addExpense(obj))
   }
-
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(ManageExpense)
+export default connect(mapStateToProp, mapDispatchToProp)(ManageExpense);
+
+ManageExpense.propTypes = {
+  removeExpense: PropTypes.func,
+  addExpense: PropTypes.func,
+  tableRows: PropTypes.array,
+  isLoading: PropTypes.bool,
+}
