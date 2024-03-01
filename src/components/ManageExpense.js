@@ -176,6 +176,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '700',
     fontSize: '16px',
     lineHeight: '47px',
+    '@media screen and (max-width:931px)': {
+      float: 'left',
+      marginBottom: '0px',
+    }
   }
 }));
 

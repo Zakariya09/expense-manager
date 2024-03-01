@@ -23,8 +23,9 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 const headersData = [
   {
     label: "Manage Expense",
-    href: "/manageExpense",
+    href: "/manage-expense",
     icon: <AccountBalanceWalletIcon />,
+    active:true,
   },
   {
     label: "Manage Salary",
@@ -33,9 +34,8 @@ const headersData = [
   },
   {
     label: "Halal Check",
-    href: "/halalCheck",
+    href: "/halal-check",
     icon: <AssignmentTurnedInIcon />,
-    active: true,
   },
   {
     label: "Manage Journal",
@@ -231,6 +231,7 @@ export default function Header() {
             style: { textDecoration: "none" },
             key: label,
           }}
+
         >
           {isLoggedIn ? (
             <MenuItem
