@@ -48,7 +48,8 @@ const appStrings = {
     delete: 'Delete',
     deleteExpense:'Delete Expense',
     updateExpense:'Update Expense',
-    update:'Update'
+    update:'Update',
+    deleteSalary:'Delete Salary',
 }
 
 

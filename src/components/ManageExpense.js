@@ -552,10 +552,10 @@ const ManageExpense = (props) => {
                 </div>
                 <Divider />
                 <Grid container spacing={1}>
-                  <Grid item md={7} xs={2}></Grid>
+                  <Grid item md={8} xs={2}></Grid>
                   <Grid
                     item
-                    md={5}
+                    md={4}
                     xs={12}
                     sm={12}
                     className={classes.modalActions}

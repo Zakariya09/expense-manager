@@ -21,6 +21,7 @@ import moment from "moment";
 import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
+import { appStrings } from "../common/AppConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    width: '50%'
   },
   floatRight: {
     float: "right",
@@ -53,10 +55,10 @@ const useStyles = makeStyles((theme) => ({
   modalTitle: {
     display: " flex",
     flexDirection: " row",
-    padding: " 12px",
+    padding: "0px 0px 0px 12px",
     margin: " -17px -33px 12px -33px",
     overflowX: " hidden",
-    background: "#5521d3c7",
+    background: 'linear-gradient(to right, #780206, #061161)',
     "& h2": {
       filter: "drop-shadow(3px 0px 8px white )",
       color: "white",
@@ -66,6 +68,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "end",
+    marginTop: '12px',
+    gap: '1rem',
     "& button": {
       textTransform: "capitalize",
     },
@@ -75,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     "& svg": {
-      color: "red",
+      color: "#780206",
       fontSize: "5rem",
       margin: "1rem",
     },
@@ -160,7 +164,7 @@ const ManageSalary = () => {
 
   const formHandler = (event) => {
     event.preventDefault();
-   
+
     const obj = {
       amount: enteredAmount,
       date: moment(enteredDate).format("DD-MM-YYYY"),
@@ -322,13 +326,18 @@ const ManageSalary = () => {
           >
             <Fade in={showDeleteModal}>
               <div className={classes.paper}>
+                <div
+                  className={`${classes.modalTitle}`}
+                >
+                  <h2 id="transition-modal-title">{appStrings.deleteSalary}</h2>
+                </div>
                 <div className={classes.deleteContent}>
                   <DeleteIcon />
-                  <Typography variant="h4" gutterBottom>
-                    Are you sure wants to delete the record?
+                  <Typography variant="h5" gutterBottom>
+                    {appStrings.deleteConfirmText}
                   </Typography>
                   <Typography variant="subtitle2" gutterBottom>
-                    Once deleted, you will not be able to recover this record!
+                    {appStrings.deleteWarningText}
                   </Typography>
                 </div>
                 <Divider />
@@ -347,16 +356,15 @@ const ManageSalary = () => {
                       color="primary"
                       onClick={deleteExpense}
                     >
-                      <DeleteIcon /> Delete
+                      <DeleteIcon /> {appStrings.delete}
                     </Button>
-                    &nbsp;&nbsp;
                     <Button
                       type="button"
                       onClick={handleDeleteClose}
                       variant="contained"
                       color="secondary"
                     >
-                      <span className="material-icons">close</span> Cancel
+                      <span className="material-icons">close</span> {appStrings.cancel}
                     </Button>
                   </Grid>
                 </Grid>
