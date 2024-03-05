@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -15,7 +15,7 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { addSalary, removeSalary } from "../store/salary-slice";
 import moment from "moment";
 import { useSelector } from "react-redux";
@@ -89,21 +89,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createData(name, amount, date) {
-  return { name, amount, date };
-}
-
-// const rows = [
-//   { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
-// ];
 const columns = [
   { id: "date", label: "Date", minWidth: 100 },
   { id: "amount", label: "Amount", minWidth: 100 },
   { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
-const ManageSalary = () => {
-  const rows = useSelector((state) => state.salary.salaries);
+const ManageSalary = (props) => {
+  const rows = props.tableRows;
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -115,16 +108,24 @@ const ManageSalary = () => {
     React.useState(false);
   const [enteredDateIsTouched, setEnteredDateIsTouched] = React.useState(false);
   const [data, setData] = React.useState({});
-  const dispatch = useDispatch();
-  const [] = useReducer();
+  const isLoading = props.isLoading;
+  const [salaryRecord, setSalaryRecord] = React.useState([]);
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setOpen(false);
+      setShowDeleteModal(false);
+      setSalaryRecord(rows)
+    }
+  }, [isLoading, rows]);
 
   const handleDelete = (expenseObj) => {
     setShowDeleteModal(true);
     setData(expenseObj);
   };
-  const deleteExpense = () => {
-    dispatch(removeSalary(data.id));
-    handleDeleteClose();
+  const deleteSalary = () => {
+    props.removeSalary(data.id)
   };
   const enteredAmountIsValid = enteredAmount.trim() !== "";
   const enteredAmountIsInvalid =
@@ -137,15 +138,20 @@ const ManageSalary = () => {
   }
 
   const handleOpen = () => {
+    setIsUpdate(false);
+    resetForm();
     setOpen(true);
   };
 
+  const resetForm = () => {
+    setEnteredAmount("");
+    setEnteredDate(new Date());
+    setEnteredAmountIsTouched(false);
+    setEnteredDateIsTouched(false);
+  }
+
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleDeleteClose = () => {
-    setShowDeleteModal(false);
   };
 
   const amountChangeHandler = (event) => {
@@ -162,15 +168,24 @@ const ManageSalary = () => {
     setEnteredDateIsTouched(true);
   };
 
+  const handleEdit = (salaryObj) => {
+    setIsUpdate(prevState => true)
+    setEnteredAmount(salaryObj.amount)
+    setEnteredDate(new Date(salaryObj.date.split("-").reverse().join("-")))
+    setOpen(true);
+    setData(salaryObj);
+  }
+
   const formHandler = (event) => {
     event.preventDefault();
 
     const obj = {
       amount: enteredAmount,
       date: moment(enteredDate).format("DD-MM-YYYY"),
+      ...(isUpdate && { id: data.id })
     };
-    dispatch(addSalary(obj));
 
+    props.addSalary({ obj, isUpdate });
     setEnteredAmount("");
     setEnteredAmountIsTouched(false);
     setEnteredDate(new Date());
@@ -196,7 +211,10 @@ const ManageSalary = () => {
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} handleDelete={handleDelete} />
+            <Table rows={salaryRecord}
+              columns={columns}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit} />
           </section>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -354,13 +372,13 @@ const ManageSalary = () => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      onClick={deleteExpense}
+                      onClick={deleteSalary}
                     >
                       <DeleteIcon /> {appStrings.delete}
                     </Button>
                     <Button
                       type="button"
-                      onClick={handleDeleteClose}
+                      onClick={() => { setShowDeleteModal(false) }}
                       variant="contained"
                       color="secondary"
                     >
@@ -377,4 +395,18 @@ const ManageSalary = () => {
   );
 };
 
-export default ManageSalary;
+const mapStateToProp = (state) => {
+  return {
+    tableRows: state.salary.salaries,
+    isLoading: state.expense.isLoading
+  }
+}
+
+const mapDispatchToProp = (dispatch) => {
+  return {
+    removeSalary: (id) => dispatch(removeSalary(id)),
+    addSalary: (obj) => dispatch(addSalary(obj))
+  }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(ManageSalary);

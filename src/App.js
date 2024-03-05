@@ -5,7 +5,7 @@ import NotFound from "./pages/NotFound";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { saveExpense, getExpenses, deleteExpense } from "./store/expense-actions";
-import { sendSalaryData, getSalary } from "./store/salary-actions";
+import { saveSalary, deleteSalary, getSalaries } from "./store/salary-actions";
 import { sendJournalData, getJournal } from "./store/journal-actions";
 import { sendEquityData, getEquity } from "./store/equity-actions";
 import { sendHoldingData, getHolding } from "./store/holding-actions";
@@ -29,11 +29,12 @@ function App() {
   const journals = useSelector((state) => state.journal.journals);
   const equities = useSelector((state) => state.equity.equities);
   const holdings = useSelector((state) => state.holding.holdings);
-  const isSalaryUpdate = useSelector((state) => state.salary.isSalaryUpdate);
+  const isSalaryUpdate = useSelector((state) => state.salary.change);
   const isJournalUpdate = useSelector((state) => state.journal.isJournalUpdate);
   const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
   const isHoldingUpdate = useSelector((state) => state.holding.change);
   const expenseState = useSelector((state) => state.expense);
+  const salaryState = useSelector((state) => state.salary);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -43,7 +44,7 @@ function App() {
 
   useEffect(() => {
     dispatch(getExpenses());
-    dispatch(getSalary());
+    dispatch(getSalaries());
     dispatch(getJournal());
     dispatch(getEquity());
     dispatch(getHolding());
@@ -69,8 +70,12 @@ function App() {
       isInitial = false;
       return;
     }
-    if (isSalaryUpdate) {
-      dispatch(sendSalaryData(salaries));
+    if (salaryState.action == 'delete') {
+      dispatch(deleteSalary(salaryState.selectedSalary));
+    }
+
+    if (salaryState.action == 'save') {
+      dispatch(saveSalary(salaryState.selectedSalary, salaryState.isUpdate));
     }
   }, [salaries, isSalaryUpdate]);
 

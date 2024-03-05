@@ -4,7 +4,12 @@ import { useSelector } from "react-redux";
 
 const AppLoader = () => {
     const [showLoader, setShowLoader] = useState();
-    const isLoading = useSelector((state) => state.expense.isLoading);
+    let isLoading;
+    if (document.URL.includes('manage-expense')) {
+        isLoading = useSelector((state) => state.expense.isLoading);
+    } else if (document.URL.includes('manage-salary')) {
+        isLoading = useSelector((state) => state.salary.isLoading);
+    }
 
     useEffect(() => {
         setShowLoader(isLoading);
