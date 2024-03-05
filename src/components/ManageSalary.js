@@ -21,7 +21,7 @@ import moment from "moment";
 import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
-import { appStrings } from "../common/AppConstants";
+import { appStrings, salaryGridColumn } from "../common/AppConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -88,12 +88,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const columns = [
-  { id: "date", label: "Date", minWidth: 100 },
-  { id: "amount", label: "Amount", minWidth: 100 },
-  { id: "Actions", label: "Actions", minWidth: 10 },
-];
 
 const ManageSalary = (props) => {
   const rows = props.tableRows;
@@ -205,14 +199,14 @@ const ManageSalary = (props) => {
               color="primary"
               className={classes.floatRight}
             >
-              <span className="material-icons">add</span> Add Salary
+              <span className="material-icons">{appStrings.add}</span> {appStrings.addSalary}
             </Button>
           </div>
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
             <Table rows={salaryRecord}
-              columns={columns}
+              columns={salaryGridColumn}
               handleDelete={handleDelete}
               handleEdit={handleEdit} />
           </section>
@@ -233,9 +227,8 @@ const ManageSalary = (props) => {
                 <div
                   className={`${classes.modalTitle} ${expenseClasses.modalHeader}`}
                 >
-                  <h2 id="transition-modal-title">Add Salary</h2>
+                  <h2 id="transition-modal-title">{appStrings.addSalary}</h2>
                 </div>
-                <Divider />
                 <div>
                   <form
                     onSubmit={formHandler}
@@ -245,7 +238,7 @@ const ManageSalary = (props) => {
                   >
                     <Grid container>
                       <Grid item md={2} xs={12} sm={12}>
-                        <label>Amount :</label>
+                        <label>{appStrings.amount} :</label>
                       </Grid>
                       <Grid item md={10} xs={12} sm={12}>
                         <TextField
@@ -261,13 +254,13 @@ const ManageSalary = (props) => {
                           min="1"
                         />
                         {enteredAmountIsInvalid && (
-                          <p className={expenseClasses.errorText}>
-                            Please enter amount.
+                          <p className={'text-danger'}>
+                            {appStrings.amountWarningTest}
                           </p>
                         )}
                       </Grid>
                       <Grid item md={2} xs={12} sm={12}>
-                        <label>Date :</label>
+                        <label>{appStrings.date} :</label>
                       </Grid>
                       <Grid item md={10} xs={8}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -289,8 +282,8 @@ const ManageSalary = (props) => {
                           </Grid>
                         </MuiPickersUtilsProvider>
                         {enteredDateIsInvalid && (
-                          <p className={expenseClasses.errorText}>
-                            Please Select date.
+                          <p className={'text-danger'}>
+                            {appStrings.dateWarningText}
                           </p>
                         )}
                       </Grid>
@@ -311,7 +304,7 @@ const ManageSalary = (props) => {
                           color="primary"
                           disabled={!formIsValid}
                         >
-                          <span className="material-icons">save</span> Save
+                          <span className="material-icons">{appStrings.saveIcon}</span> {appStrings.save}
                         </Button>
                         &nbsp;&nbsp;
                         <Button
@@ -320,7 +313,7 @@ const ManageSalary = (props) => {
                           variant="contained"
                           color="secondary"
                         >
-                          <span className="material-icons">close</span> Cancel
+                          <span className="material-icons">{appStrings.closeIcon}</span> {appStrings.cancel}
                         </Button>
                       </Grid>
                     </Grid>

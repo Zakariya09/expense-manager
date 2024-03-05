@@ -21,6 +21,12 @@ const expenseGridColumn = [
     { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
+const salaryGridColumn = [
+    { id: "date", label: "Date", minWidth: 100 },
+    { id: "amount", label: "Amount", minWidth: 100 },
+    { id: "Actions", label: "Actions", minWidth: 10 },
+];
+
 const appStrings = {
     login: 'Login',
     signup: 'Signup',
@@ -50,7 +56,11 @@ const appStrings = {
     updateExpense:'Update Expense',
     update:'Update',
     deleteSalary:'Delete Salary',
+    addSalary:'Add Salary',
+    add:'add',
+    saveIcon:'save',
+    closeIcon:'close',
 }
 
 
-export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn };
+export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn};

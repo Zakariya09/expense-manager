@@ -1,0 +1,14 @@
+label {
+    display: flex;
+    font-size: 16px;
+    align-items: center;
+    font-weight: 700;
+    line-height: 47px;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.text-danger{
+    color: #780206;
+    margin: 0px 9px;
+  }
