@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { saveExpense, getExpenses, deleteExpense } from "./store/expense-actions";
 import { saveSalary, deleteSalary, getSalaries } from "./store/salary-actions";
 import { deleteJournal, getJournals, saveJournal } from "./store/journal-actions";
-import { sendEquityData, getEquity } from "./store/equity-actions";
+import { getEquities, deleteEquity, saveEquity } from "./store/equity-actions";
 import { sendHoldingData, getHolding } from "./store/holding-actions";
 import { useDispatch } from "react-redux";
 import Login from "./pages/Login";
@@ -31,11 +31,12 @@ function App() {
   const holdings = useSelector((state) => state.holding.holdings);
   const isSalaryUpdate = useSelector((state) => state.salary.change);
   const isJournalUpdate = useSelector((state) => state.journal.change);
-  const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
+  const isEquityUpdate = useSelector((state) => state.equity.change);
   const isHoldingUpdate = useSelector((state) => state.holding.change);
   const expenseState = useSelector((state) => state.expense);
   const salaryState = useSelector((state) => state.salary);
   const jornalState = useSelector((state) => state.journal);
+  const equityState = useSelector((state) => state.equity);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -47,7 +48,7 @@ function App() {
     dispatch(getExpenses());
     dispatch(getSalaries());
     dispatch(getJournals());
-    dispatch(getEquity());
+    dispatch(getEquities());
     dispatch(getHolding());
   }, [dispatch]);
 
@@ -99,8 +100,12 @@ function App() {
       isInitial = false;
       return;
     }
-    if (isEquityUpdate) {
-      dispatch(sendEquityData(equities));
+    if (equityState.action == 'delete') {
+      dispatch(deleteEquity(equityState.selectedEquity));
+    }
+
+    if (equityState.action == 'save') {
+      dispatch(saveEquity(equityState.selectedEquity, equityState.isUpdate));
     }
   }, [equities, isEquityUpdate]);
 

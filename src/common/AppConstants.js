@@ -36,7 +36,17 @@ const journalGridColumns = [
     { id: "profitLoss", label: "Profit/Loss", minWidth: 10 },
     { id: "breakdown", label: "Breakdown", minWidth: 10 },
     { id: "Actions", label: "Actions", minWidth: 10 },
-  ];
+];
+
+const equityGridColumns = [
+    { id: "stockName", label: "Stock Name", minWidth: 100 },
+    { id: "entryPrice", label: "Entry Price", minWidth: 10 },
+    { id: "target", label: "Target", minWidth: 10 },
+    { id: "debtPercent", label: "Debt in %", minWidth: 10 },
+    { id: "allTimeHigh", label: "All Time High", minWidth: 10 },
+    { id: "allTimeLow", label: "All Time Low", minWidth: 10 },
+    { id: "Actions", label: "Actions", minWidth: 10 },
+];
 
 const appStrings = {
     login: 'Login',
@@ -63,18 +73,21 @@ const appStrings = {
     deleteConfirmText: 'Are you sure wants to delete the record?',
     deleteWarningText: 'Once deleted, you will not be able to recover this record!',
     delete: 'Delete',
-    deleteExpense:'Delete Expense',
-    updateExpense:'Update Expense',
-    update:'Update',
-    deleteSalary:'Delete Salary',
-    addSalary:'Add Salary',
-    add:'add',
-    saveIcon:'save',
-    closeIcon:'close',
-    addJournal:'Add Journal',
-    deleteJournal:'Delete Journal',
-    updateJournal:'Update Journal',
+    deleteExpense: 'Delete Expense',
+    updateExpense: 'Update Expense',
+    update: 'Update',
+    deleteSalary: 'Delete Salary',
+    addSalary: 'Add Salary',
+    add: 'add',
+    saveIcon: 'save',
+    closeIcon: 'close',
+    addJournal: 'Add Journal',
+    deleteJournal: 'Delete Journal',
+    updateJournal: 'Update Journal',
+    addEquity: 'Add Equity',
+    updateEquity: 'Update Equity',
+    deleteEquity: 'Delete Equity',
 }
 
 
-export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn, journalGridColumns};
+export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn, journalGridColumns, equityGridColumns };

@@ -8,19 +8,14 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import expenseClasses from "./ManageExpenseLayout.module.css";
 import { Divider } from "@material-ui/core";
-import DateFnsUtils from "@date-io/date-fns";
 import Table from "../common/Table";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { addEquity, removeEquity } from "../store/equity-slice";
-import moment from "moment";
-import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
+import { appStrings, equityGridColumns } from "../common/AppConstants";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    width: '50%'
   },
   floatRight: {
     float: "right",
@@ -53,10 +49,10 @@ const useStyles = makeStyles((theme) => ({
   modalTitle: {
     display: " flex",
     flexDirection: " row",
-    padding: " 12px",
+    padding: "0px 0px 0px 12px",
     margin: " -17px -33px 12px -33px",
     overflowX: " hidden",
-    background: "#5521d3c7",
+    background: 'linear-gradient(to right, #780206, #061161)',
     "& h2": {
       filter: "drop-shadow(3px 0px 8px white )",
       color: "white",
@@ -66,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "end",
+    marginTop: '12px',
+    gap: '1rem',
     "& button": {
       textTransform: "capitalize",
     },
@@ -83,27 +81,15 @@ const useStyles = makeStyles((theme) => ({
       margin: "1rem",
     },
   },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '1rem',
+  }
 }));
 
-function createData(name, amount, date) {
-  return { name, amount, date };
-}
-
-// const rows = [
-//   { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
-// ];
-const columns = [
-  { id: "stockName", label: "Stock Name", minWidth: 100 },
-  { id: "entryPrice", label: "Entry Price", minWidth: 10 },
-  { id: "target", label: "Target", minWidth: 10 },
-  { id: "debtPercent", label: "Debt in %", minWidth: 10 },
-  { id: "allTimeHigh", label: "All Time High", minWidth: 10 },
-  { id: "allTimeLow", label: "All Time Low", minWidth: 10 },
-  { id: "Actions", label: "Actions", minWidth: 10 },
-];
-
-const ManageEquity = () => {
-  const rows = useSelector((state) => state.equity.equities);
+const ManageEquity = (props) => {
+  const rows = props.tableRows;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
@@ -113,23 +99,60 @@ const ManageEquity = () => {
   const [enteredDebtPercent, setEnteredDebtPercent] = React.useState("");
   const [enteredATH, setEnteredATH] = React.useState("");
   const [enteredATL, setEnteredATL] = React.useState("");
-  const [isProfit, setIsProfit] = React.useState(false);
+  const isLoading = props.isLoading;
+  const [isUpdate, setIsUpdate] = React.useState(false);
+  const [equityRecords, setEquityRecord] = React.useState([]);
 
   const [data, setData] = React.useState({});
   const dispatch = useDispatch();
   const [] = useReducer();
 
-  const handleDelete = (expenseObj) => {
+  useEffect(() => {
+    if (!isLoading) {
+      setOpen(false);
+      setShowDeleteModal(false);
+      setEquityRecord(rows)
+    }
+  }, [isLoading, rows]);
+
+  const handleDelete = (equityObj) => {
     setShowDeleteModal(true);
-    setData(expenseObj);
+    setData(equityObj);
   };
-  const deleteExpense = () => {
-    dispatch(removeEquity(data.id));
+
+  const handleEdit = (equityObj) => {
+    setIsUpdate(prevState => true);
+    console.log('equityObj')
+    console.log(equityObj)
+    setData(equityObj);
+    setEnteredATH(equityObj.allTimeHigh);
+    setEnteredATL(equityObj.allTimeLow);
+    setEnteredDebtPercent(equityObj.debtPercent);
+    setEnteredEntryPrice(equityObj.entryPrice);
+    setEnteredStockName(equityObj.stockName);
+    setEnteredTargetPrice(equityObj.target);
+    setOpen(true);
+  };
+
+  const resetForm = () => {
+    setEnteredATH('');
+    setEnteredATL('');
+    setEnteredDebtPercent('');
+    setEnteredEntryPrice('');
+    setEnteredStockName('');
+    setEnteredTargetPrice('');
+  }
+
+
+  const deleteEquity = () => {
+    props.removeEquity(data.id)
     handleDeleteClose();
   };
 
   let formIsValid = false;
   const handleOpen = () => {
+    setIsUpdate(false);
+    resetForm();
     setOpen(true);
   };
 
@@ -142,42 +165,42 @@ const ManageEquity = () => {
   };
 
   const changeHandler = (event, field) => {
-   
-    if(field === "name"){
-        setEnteredStockName(event.target.value);
+
+    if (field === "name") {
+      setEnteredStockName(event.target.value);
     }
-   
-    if(field === "entryPrice"){
-        setEnteredEntryPrice(Number(event.target.value));
+
+    if (field === "entryPrice") {
+      setEnteredEntryPrice(Number(event.target.value));
     }
-    if(field === "target"){
-        setEnteredTargetPrice(Number(event.target.value));
+    if (field === "target") {
+      setEnteredTargetPrice(Number(event.target.value));
     }
-     if(field === "debtPercent"){
-        setEnteredDebtPercent(Number(event.target.value));
+    if (field === "debtPercent") {
+      setEnteredDebtPercent(Number(event.target.value));
     }
-    if(field === "allTimeHigh"){
-        setEnteredATH(Number(event.target.value));
+    if (field === "allTimeHigh") {
+      setEnteredATH(Number(event.target.value));
     }
-    if(field === "allTimeLow"){
-        setEnteredATL(Number(event.target.value));
+    if (field === "allTimeLow") {
+      setEnteredATL(Number(event.target.value));
     }
   };
 
   const formHandler = (event) => {
     event.preventDefault();
-   
     const obj = {
-        stockName:enteredStockName,
-        entryPrice:enteredEntryPrice,
-        target:enteredTargetPrice,
-        debtPercent:enteredDebtPercent,
-        allTimeHigh: enteredATH,
-        allTimeLow: enteredATL
+      stockName: enteredStockName,
+      entryPrice: enteredEntryPrice,
+      target: enteredTargetPrice,
+      debtPercent: enteredDebtPercent,
+      allTimeHigh: enteredATH,
+      allTimeLow: enteredATL,
+      ...(isUpdate && { id: data.id })
     };
     console.log("obj")
     console.log(obj)
-    dispatch(addEquity(obj));
+    props.addEquity({ obj, isUpdate });
     handleClose();
   };
 
@@ -193,15 +216,18 @@ const ManageEquity = () => {
               color="primary"
               className={classes.floatRight}
             >
-              <span className="material-icons">add</span> Add Equity
+              <span className="material-icons">{appStrings.add}</span> {appStrings.addEquity}
             </Button>
           </div>
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} handleDelete={handleDelete} />
+            <Table rows={equityRecords}
+              columns={equityGridColumns}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit} />
           </section>
-           <Modal
+          <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             className={classes.modal}
@@ -216,11 +242,10 @@ const ManageEquity = () => {
             <Fade in={open}>
               <div className={classes.paper}>
                 <div
-                  className={`${classes.modalTitle} ${expenseClasses.modalHeader}`}
+                  className={`${classes.modalTitle}`}
                 >
-                  <h2 id="transition-modal-title">Add Equity</h2>
+                  <h2 id="transition-modal-title">{!isUpdate ? appStrings.addEquity : appStrings.updateEquity}</h2>
                 </div>
-                <Divider />
                 <div>
                   <form
                     onSubmit={formHandler}
@@ -228,81 +253,83 @@ const ManageEquity = () => {
                     noValidate
                     autoComplete="off"
                   >
-                    <Grid container>
-                    <Grid item md={6} lg={6} xs={12} sm={12}>
+                    <Grid container
+                      className={classes.formContainer}
+                    >
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Stock Name"
                           id="name"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "name")}
+                          onChange={(e) => changeHandler(e, "name")}
                           value={enteredStockName}
                         />
                       </Grid>
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Entry Price"
                           id="entryPrice"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "entryPrice")}
+                          onChange={(e) => changeHandler(e, "entryPrice")}
                           value={enteredEntryPrice}
                           type="number"
                           min="1"
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Target Price"
                           id="target"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "target")}
+                          onChange={(e) => changeHandler(e, "target")}
                           value={enteredTargetPrice}
                           type="number"
                           min="1"
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Debt in %"
                           id="debtPercent"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "debtPercent")}
+                          onChange={(e) => changeHandler(e, "debtPercent")}
                           value={enteredDebtPercent}
                           type="number"
                           min="1"
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="All Time High"
                           id="allTimeHigh"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "allTimeHigh")}
+                          onChange={(e) => changeHandler(e, "allTimeHigh")}
                           value={enteredATH}
                           type="number"
                           min="1"
                         />
                       </Grid>
-                           <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="All Time Low"
                           id="allTimeLow"
                           variant="outlined"
                           size="small"
                           style={{ width: "100%" }}
-                          onChange={(e)=>changeHandler(e, "allTimeLow")}
+                          onChange={(e) => changeHandler(e, "allTimeLow")}
                           value={enteredATL}
                           type="number"
                           min="1"
@@ -311,10 +338,10 @@ const ManageEquity = () => {
                     </Grid>
                     <Divider />
                     <Grid container spacing={1}>
-                      <Grid item md={8} xs={2}></Grid>
+                      <Grid item md={6} xs={2}></Grid>
                       <Grid
                         item
-                        md={4}
+                        md={6}
                         xs={12}
                         sm={12}
                         className={classes.modalActions}
@@ -325,7 +352,7 @@ const ManageEquity = () => {
                           color="primary"
                           disabled={formIsValid}
                         >
-                          <span className="material-icons">save</span> Save
+                          <span className="material-icons">{appStrings.saveIcon}</span> {appStrings.save}
                         </Button>
                         &nbsp;&nbsp;
                         <Button
@@ -334,7 +361,7 @@ const ManageEquity = () => {
                           variant="contained"
                           color="secondary"
                         >
-                          <span className="material-icons">close</span> Cancel
+                          <span className="material-icons">{appStrings.closeIcon}</span> {appStrings.cancel}
                         </Button>
                       </Grid>
                     </Grid>
@@ -343,7 +370,6 @@ const ManageEquity = () => {
               </div>
             </Fade>
           </Modal>
-
           <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
@@ -358,21 +384,26 @@ const ManageEquity = () => {
           >
             <Fade in={showDeleteModal}>
               <div className={classes.paper}>
+                <div
+                  className={`${classes.modalTitle}`}
+                >
+                  <h2 id="transition-modal-title">{appStrings.deleteEquity}</h2>
+                </div>
                 <div className={classes.deleteContent}>
                   <DeleteIcon />
-                  <Typography variant="h4" gutterBottom>
-                    Are you sure wants to delete the record?
+                  <Typography variant="h5" gutterBottom>
+                    {appStrings.deleteConfirmText}
                   </Typography>
                   <Typography variant="subtitle2" gutterBottom>
-                    Once deleted, you will not be able to recover this record!
+                    {appStrings.deleteWarningText}
                   </Typography>
                 </div>
                 <Divider />
                 <Grid container spacing={1}>
-                  <Grid item md={8} xs={2}></Grid>
+                  <Grid item md={6} xs={2}></Grid>
                   <Grid
                     item
-                    md={4}
+                    md={6}
                     xs={12}
                     sm={12}
                     className={classes.modalActions}
@@ -381,18 +412,17 @@ const ManageEquity = () => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      onClick={deleteExpense}
+                      onClick={deleteEquity}
                     >
-                      <DeleteIcon /> Delete
+                      <DeleteIcon /> {appStrings.delete}
                     </Button>
-                    &nbsp;&nbsp;
                     <Button
                       type="button"
-                      onClick={handleDeleteClose}
                       variant="contained"
                       color="secondary"
+                      onClick={() => { setShowDeleteModal(false) }}
                     >
-                      <span className="material-icons">close</span> Cancel
+                      <span className="material-icons">close</span> {appStrings.cancel}
                     </Button>
                   </Grid>
                 </Grid>
@@ -405,4 +435,25 @@ const ManageEquity = () => {
   );
 };
 
-export default ManageEquity;
+const mapStateToProp = (state) => {
+  return {
+    tableRows: state.equity.equities,
+    isLoading: state.equity.isLoading
+  }
+}
+
+const mapDispatchToProp = (dispatch) => {
+  return {
+    removeEquity: (id) => dispatch(removeEquity(id)),
+    addEquity: (obj) => dispatch(addEquity(obj))
+  }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(ManageEquity);
+
+ManageEquity.propTypes = {
+  removeEquity: PropTypes.func,
+  addEquity: PropTypes.func,
+  tableRows: PropTypes.array,
+  isLoading: PropTypes.bool,
+}

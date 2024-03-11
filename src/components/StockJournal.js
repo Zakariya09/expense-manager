@@ -21,6 +21,7 @@ import moment from "moment";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
 import { appStrings, journalGridColumns } from "../common/AppConstants";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -477,3 +478,9 @@ const mapDispatchToProp = (dispatch) => {
 
 export default connect(mapStateToProp, mapDispatchToProp)(ManageJournal);
 
+ManageJournal.propTypes = {
+  removeJournal: PropTypes.func,
+  addJournal: PropTypes.func,
+  tableRows: PropTypes.array,
+  isLoading: PropTypes.bool,
+}
