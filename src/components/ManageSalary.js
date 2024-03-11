@@ -124,8 +124,8 @@ const ManageSalary = (props) => {
   const enteredAmountIsValid = enteredAmount.trim() !== "";
   const enteredAmountIsInvalid =
     !enteredAmountIsValid && enteredAmountIsTouched;
-  const enteredDateIsValid = enteredAmount.trim() !== "";
-  const enteredDateIsInvalid = !enteredDateIsValid && enteredDateIsTouched;
+  const enteredDateIsValid = (enteredDate !== null && (enteredDate).toString() !== 'Invalid Date');
+  const enteredDateIsInvalid = ((enteredDate !== null && (enteredDate).toString() == 'Invalid Date') && enteredDateIsTouched) || enteredDate == null;
   let formIsValid = false;
   if (enteredAmountIsValid && enteredDateIsValid) {
     formIsValid = true;

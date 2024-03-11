@@ -1,4 +1,4 @@
-import { Route, RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import React, { Fragment } from "react";
 import "./App.css";
 import NotFound from "./pages/NotFound";
@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { saveExpense, getExpenses, deleteExpense } from "./store/expense-actions";
 import { saveSalary, deleteSalary, getSalaries } from "./store/salary-actions";
-import { sendJournalData, getJournal } from "./store/journal-actions";
+import { deleteJournal, getJournals, saveJournal } from "./store/journal-actions";
 import { sendEquityData, getEquity } from "./store/equity-actions";
 import { sendHoldingData, getHolding } from "./store/holding-actions";
 import { useDispatch } from "react-redux";
@@ -30,11 +30,12 @@ function App() {
   const equities = useSelector((state) => state.equity.equities);
   const holdings = useSelector((state) => state.holding.holdings);
   const isSalaryUpdate = useSelector((state) => state.salary.change);
-  const isJournalUpdate = useSelector((state) => state.journal.isJournalUpdate);
+  const isJournalUpdate = useSelector((state) => state.journal.change);
   const isEquityUpdate = useSelector((state) => state.equity.isEquityUpdate);
   const isHoldingUpdate = useSelector((state) => state.holding.change);
   const expenseState = useSelector((state) => state.expense);
   const salaryState = useSelector((state) => state.salary);
+  const jornalState = useSelector((state) => state.journal);
 
   const isLoggedIn =
     localStorage.getItem("userObject") &&
@@ -45,7 +46,7 @@ function App() {
   useEffect(() => {
     dispatch(getExpenses());
     dispatch(getSalaries());
-    dispatch(getJournal());
+    dispatch(getJournals());
     dispatch(getEquity());
     dispatch(getHolding());
   }, [dispatch]);
@@ -84,8 +85,12 @@ function App() {
       isInitial = false;
       return;
     }
-    if (isJournalUpdate) {
-      dispatch(sendJournalData(journals));
+    if (jornalState.action == 'delete') {
+      dispatch(deleteJournal(jornalState.selectedJournal));
+    }
+
+    if (jornalState.action == 'save') {
+      dispatch(saveJournal(jornalState.selectedJournal, jornalState.isUpdate));
     }
   }, [journals, isJournalUpdate]);
 

@@ -27,6 +27,17 @@ const salaryGridColumn = [
     { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
+const journalGridColumns = [
+    { id: "date", label: "Date", minWidth: 100 },
+    { id: "stockName", label: "Stock Name", minWidth: 100 },
+    { id: "entryPrice", label: "Entry Price", minWidth: 10 },
+    { id: "exitPrice", label: "Exit Price", minWidth: 10 },
+    { id: "quantity", label: "Quantity", minWidth: 10 },
+    { id: "profitLoss", label: "Profit/Loss", minWidth: 10 },
+    { id: "breakdown", label: "Breakdown", minWidth: 10 },
+    { id: "Actions", label: "Actions", minWidth: 10 },
+  ];
+
 const appStrings = {
     login: 'Login',
     signup: 'Signup',
@@ -60,7 +71,10 @@ const appStrings = {
     add:'add',
     saveIcon:'save',
     closeIcon:'close',
+    addJournal:'Add Journal',
+    deleteJournal:'Delete Journal',
+    updateJournal:'Update Journal',
 }
 
 
-export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn};
+export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn, journalGridColumns};

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -15,12 +15,12 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { addJournal, removeJournal } from "../store/journal-slice";
 import moment from "moment";
-import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
+import { appStrings, journalGridColumns } from "../common/AppConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    width: '50%'
   },
   floatRight: {
     float: "right",
@@ -53,10 +54,10 @@ const useStyles = makeStyles((theme) => ({
   modalTitle: {
     display: " flex",
     flexDirection: " row",
-    padding: " 12px",
+    padding: "0px 0px 0px 12px",
     margin: " -17px -33px 12px -33px",
     overflowX: " hidden",
-    background: "#5521d3c7",
+    background: 'linear-gradient(to right, #780206, #061161)',
     "& h2": {
       filter: "drop-shadow(3px 0px 8px white )",
       color: "white",
@@ -66,6 +67,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "end",
+    marginTop: '12px',
+    gap: '1rem',
     "& button": {
       textTransform: "capitalize",
     },
@@ -75,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     "& svg": {
-      color: "red",
+      color: "#780206",
       fontSize: "5rem",
       margin: "1rem",
     },
@@ -83,32 +86,17 @@ const useStyles = makeStyles((theme) => ({
       margin: "1rem",
     },
   },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '1rem',
+  }
 }));
 
-function createData(name, amount, date) {
-  return { name, amount, date };
-}
-
-// const rows = [
-//   { id: "12", name: "Grocery", amount: "1200", date: "15-08-2021" },
-// ];
-const columns = [
-  { id: "date", label: "Date", minWidth: 100 },
-  { id: "stockName", label: "Stock Name", minWidth: 100 },
-  { id: "entryPrice", label: "Entry Price", minWidth: 10 },
-  { id: "exitPrice", label: "Exit Price", minWidth: 10 },
-  { id: "quantity", label: "Quantity", minWidth: 10 },
-  { id: "profitLoss", label: "Profit/Loss", minWidth: 10 },
-  { id: "breakdown", label: "Breakdown", minWidth: 10 },
-  { id: "Actions", label: "Actions", minWidth: 10 },
-];
-
-const ManageJournal = () => {
-  const rows = useSelector((state) => state.journal.journals);
-
+const ManageJournal = (props) => {
+  const rows = props.tableRows;
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [enteredDate, setEnteredDate] = React.useState(new Date());
   const [enteredStockName, setEnteredStockName] = React.useState("");
   const [enteredQuantity, setEnteredQuantity] = React.useState("");
@@ -117,31 +105,63 @@ const ManageJournal = () => {
   const [enteredProfitLostAmount, setEnteredProfitLostAmount] = React.useState("");
   const [enteredBreakdown, setEnteredBreakdown] = React.useState("");
   const [isProfit, setIsProfit] = React.useState(false);
-
   const [data, setData] = React.useState({});
-  const dispatch = useDispatch();
-  const [] = useReducer();
-
-  const handleDelete = (expenseObj) => {
-    setShowDeleteModal(true);
-    setData(expenseObj);
-  };
-  const deleteExpense = () => {
-    dispatch(removeJournal(data.id));
-    handleDeleteClose();
-  };
-
+  const [isUpdate, setIsUpdate] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [journalRecord, setJournalRecord] = React.useState([]);
   let formIsValid = false;
+  const isLoading = props.isLoading;
+
+  useEffect(() => {
+    if (!isLoading) {
+      setOpen(false);
+      setShowDeleteModal(false);
+      setJournalRecord(rows)
+    }
+  }, [isLoading, rows]);
+
+  const handleDelete = (journalObj) => {
+    setShowDeleteModal(true);
+    setData(journalObj);
+  };
+
+  const deleteJournal = () => {
+    props.removeJournal(data.id);
+  };
+
   const handleOpen = () => {
+    setIsUpdate(false);
+    resetForm();
     setOpen(true);
+  };
+
+  const resetForm = () => {
+    setEnteredDate(new Date());
+    setEnteredBreakdown("");
+    setEnteredEntryPrice("");
+    setEnteredExitPrice("");
+    setIsProfit("");
+    setEnteredProfitLostAmount("");
+    setEnteredQuantity("");
+    setEnteredStockName("");
+  }
+
+  const handleEdit = (journalObj) => {
+    setIsUpdate(prevState => true)
+    setEnteredDate(new Date(journalObj.date.split("-").reverse().join("-")));
+    setEnteredBreakdown(journalObj.breakdown);
+    setEnteredEntryPrice(journalObj.entryPrice);
+    setEnteredExitPrice(journalObj.exitPrice);
+    setIsProfit(journalObj.isProfit);
+    setEnteredProfitLostAmount(journalObj.profitLoss);
+    setEnteredQuantity(journalObj.quantity);
+    setEnteredStockName(journalObj.stockName);
+    setOpen(true);
+    setData(journalObj);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleDeleteClose = () => {
-    setShowDeleteModal(false);
   };
 
   const changeHandler = (event, field) => {
@@ -172,7 +192,6 @@ const ManageJournal = () => {
 
   const formHandler = (event) => {
     event.preventDefault();
-
     const obj = {
       stockName: enteredStockName,
       quantity: enteredQuantity,
@@ -181,10 +200,10 @@ const ManageJournal = () => {
       profitLoss: enteredProfitLostAmount,
       breakdown: enteredBreakdown,
       date: moment(enteredDate).format("DD-MM-YYYY"),
-      isProfit: isProfit
+      isProfit: isProfit,
+      ...(isUpdate && { id: data.id })
     };
-    dispatch(addJournal(obj));
-
+    props.addJournal({ obj, isUpdate });
     setEnteredProfitLostAmount("");
     setEnteredDate(new Date());
     handleClose();
@@ -202,13 +221,15 @@ const ManageJournal = () => {
               color="primary"
               className={classes.floatRight}
             >
-              <span className="material-icons">add</span> Add Journal
+              <span className="material-icons">{appStrings.add}</span> {appStrings.addJournal}
             </Button>
           </div>
         </Grid>
         <Grid item md={12} xs={12} sm={12}>
           <section className={expenseClasses.tableSection}>
-            <Table rows={rows} columns={columns} handleDelete={handleDelete} />
+            <Table rows={journalRecord} columns={journalGridColumns}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit} />
           </section>
           <Modal
             aria-labelledby="transition-modal-title"
@@ -227,9 +248,8 @@ const ManageJournal = () => {
                 <div
                   className={`${classes.modalTitle} ${expenseClasses.modalHeader}`}
                 >
-                  <h2 id="transition-modal-title">Add Journal</h2>
+                  <h2 id="transition-modal-title">{!isUpdate ? appStrings.addJournal : appStrings.updateJournal}</h2>
                 </div>
-                <Divider />
                 <div>
                   <form
                     onSubmit={formHandler}
@@ -237,8 +257,10 @@ const ManageJournal = () => {
                     noValidate
                     autoComplete="off"
                   >
-                    <Grid container>
-                      <Grid item md={6} lg={6} xs={8}>
+                    <Grid container
+                      className={classes.formContainer}
+                    >
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                           <Grid container justifyContent="space-around">
                             <KeyboardDatePicker
@@ -257,7 +279,7 @@ const ManageJournal = () => {
                           </Grid>
                         </MuiPickersUtilsProvider>
                       </Grid>
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Stock Name"
                           id="name"
@@ -268,7 +290,7 @@ const ManageJournal = () => {
                           value={enteredStockName}
                         />
                       </Grid>
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Quantity"
                           id="quantity"
@@ -282,7 +304,7 @@ const ManageJournal = () => {
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Entry Price"
                           id="entryPrice"
@@ -296,7 +318,7 @@ const ManageJournal = () => {
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Exit Price"
                           id="exitPrice"
@@ -310,7 +332,7 @@ const ManageJournal = () => {
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Profit/Lost"
                           id="profitLost"
@@ -325,7 +347,7 @@ const ManageJournal = () => {
                         />
                       </Grid>
 
-                      <Grid item md={6} lg={6} xs={12} sm={12}>
+                      <Grid item md={5} lg={5} xs={12} sm={12}>
                         <TextField
                           label="Breakdown"
                           id="breakdown"
@@ -341,10 +363,10 @@ const ManageJournal = () => {
                     </Grid>
                     <Divider />
                     <Grid container spacing={1}>
-                      <Grid item md={8} xs={2}></Grid>
+                      <Grid item md={6} xs={2}></Grid>
                       <Grid
                         item
-                        md={4}
+                        md={6}
                         xs={12}
                         sm={12}
                         className={classes.modalActions}
@@ -355,7 +377,8 @@ const ManageJournal = () => {
                           color="primary"
                           disabled={formIsValid}
                         >
-                          <span className="material-icons">save</span> Save
+                          <span className="material-icons">{appStrings.saveIcon}</span>
+                          {appStrings.save}
                         </Button>
                         &nbsp;&nbsp;
                         <Button
@@ -364,7 +387,7 @@ const ManageJournal = () => {
                           variant="contained"
                           color="secondary"
                         >
-                          <span className="material-icons">close</span> Cancel
+                          <span className="material-icons">{appStrings.closeIcon}</span> {appStrings.cancel}
                         </Button>
                       </Grid>
                     </Grid>
@@ -373,7 +396,6 @@ const ManageJournal = () => {
               </div>
             </Fade>
           </Modal>
-
           <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
@@ -388,21 +410,26 @@ const ManageJournal = () => {
           >
             <Fade in={showDeleteModal}>
               <div className={classes.paper}>
+                <div
+                  className={`${classes.modalTitle}`}
+                >
+                  <h2 id="transition-modal-title">{appStrings.deleteJournal}</h2>
+                </div>
                 <div className={classes.deleteContent}>
                   <DeleteIcon />
-                  <Typography variant="h4" gutterBottom>
-                    Are you sure wants to delete the record?
+                  <Typography variant="h5" gutterBottom>
+                    {appStrings.deleteConfirmText}
                   </Typography>
                   <Typography variant="subtitle2" gutterBottom>
-                    Once deleted, you will not be able to recover this record!
+                    {appStrings.deleteWarningText}
                   </Typography>
                 </div>
                 <Divider />
                 <Grid container spacing={1}>
-                  <Grid item md={8} xs={2}></Grid>
+                  <Grid item md={6} xs={2}></Grid>
                   <Grid
                     item
-                    md={4}
+                    md={6}
                     xs={12}
                     sm={12}
                     className={classes.modalActions}
@@ -411,18 +438,17 @@ const ManageJournal = () => {
                       type="submit"
                       variant="contained"
                       color="primary"
-                      onClick={deleteExpense}
+                      onClick={deleteJournal}
                     >
-                      <DeleteIcon /> Delete
+                      <DeleteIcon /> {appStrings.delete}
                     </Button>
-                    &nbsp;&nbsp;
                     <Button
                       type="button"
-                      onClick={handleDeleteClose}
                       variant="contained"
                       color="secondary"
+                      onClick={() => { setShowDeleteModal(false) }}
                     >
-                      <span className="material-icons">close</span> Cancel
+                      <span className="material-icons">{appStrings.close}</span> {appStrings.cancel}
                     </Button>
                   </Grid>
                 </Grid>
@@ -435,4 +461,19 @@ const ManageJournal = () => {
   );
 };
 
-export default ManageJournal;
+const mapStateToProp = (state) => {
+  return {
+    tableRows: state.journal.journals,
+    isLoading: state.journal.isLoading
+  }
+}
+
+const mapDispatchToProp = (dispatch) => {
+  return {
+    removeJournal: (id) => dispatch(removeJournal(id)),
+    addJournal: (obj) => dispatch(addJournal(obj))
+  }
+}
+
+export default connect(mapStateToProp, mapDispatchToProp)(ManageJournal);
+
