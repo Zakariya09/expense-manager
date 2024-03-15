@@ -7,7 +7,7 @@ const AppLoader = () => {
     let    isLoading = useSelector((state) => state.expense.isLoading)
     // if (document.URL.includes('manage-expense')) {
     //     isLoading = useSelector((state) => state.expense.isLoading);
-    // } else if (document.URL.includes('manage-salary')) {
+    // } else if (document.URL.includes('manage-income')) {
     //     isLoading = useSelector((state) => state.salary.isLoading);
     // }
     useEffect(() => {

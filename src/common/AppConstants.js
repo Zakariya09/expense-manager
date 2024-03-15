@@ -48,6 +48,12 @@ const equityGridColumns = [
     { id: "Actions", label: "Actions", minWidth: 10 },
 ];
 
+const incomeTypes = [
+    { id: 1, name: 'Salary' },
+    { id: 2, name: 'Trading' },
+    { id: 3, name: 'Other' },
+];
+
 const appStrings = {
     login: 'Login',
     signup: 'Signup',
@@ -87,7 +93,12 @@ const appStrings = {
     addEquity: 'Add Equity',
     updateEquity: 'Update Equity',
     deleteEquity: 'Delete Equity',
+    incomeType: 'Type',
+    addIncome: 'Add Income',
+    incomePlaceHolder: 'Select income type',
+    updateIncome:'Update Income',
+    deleteIncome:'Delete Income'
 }
 
 
-export { errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn, journalGridColumns, equityGridColumns };
+export { incomeTypes, errors, appStrings, baseUrl, signupUrl, loginpUrl, apiKey, expenseGridColumn, salaryGridColumn, journalGridColumns, equityGridColumns };

@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import expenseClasses from "./ManageExpenseLayout.module.css";
-import { Divider } from "@material-ui/core";
+import { Divider, MenuItem, Select } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
 import Table from "../common/Table";
 import {
@@ -21,7 +21,7 @@ import moment from "moment";
 import { useSelector } from "react-redux";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
-import { appStrings, salaryGridColumn } from "../common/AppConstants";
+import { appStrings, incomeTypes, salaryGridColumn } from "../common/AppConstants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -199,7 +199,7 @@ const ManageSalary = (props) => {
               color="primary"
               className={classes.floatRight}
             >
-              <span className="material-icons">{appStrings.add}</span> {appStrings.addSalary}
+              <span className="material-icons">{appStrings.add}</span> {appStrings.addIncome}
             </Button>
           </div>
         </Grid>
@@ -227,7 +227,7 @@ const ManageSalary = (props) => {
                 <div
                   className={`${classes.modalTitle} ${expenseClasses.modalHeader}`}
                 >
-                  <h2 id="transition-modal-title">{appStrings.addSalary}</h2>
+                  <h2 id="transition-modal-title">{isUpdate? appStrings.updateIncome : appStrings.addIncome}</h2>
                 </div>
                 <div>
                   <form
@@ -237,6 +237,25 @@ const ManageSalary = (props) => {
                     autoComplete="off"
                   >
                     <Grid container>
+                      <Grid item md={2} xs={12} sm={12}>
+                        <label>{appStrings.incomeType} :</label>
+                      </Grid>
+                      <Grid item md={10} xs={12} sm={12}>
+                        <Select
+                          value={'age'}
+                          // onChange={handleChange}
+                          displayEmpty
+                          className={'w-100'}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="" disabled>
+                            {appStrings.incomePlaceHolder}
+                          </MenuItem>
+                          {incomeTypes.map(item => (
+                            <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+                          ))}
+                        </Select>
+                      </Grid>
                       <Grid item md={2} xs={12} sm={12}>
                         <label>{appStrings.amount} :</label>
                       </Grid>
@@ -290,10 +309,10 @@ const ManageSalary = (props) => {
                     </Grid>
                     <Divider />
                     <Grid container spacing={1}>
-                      <Grid item md={8} xs={2}></Grid>
+                      <Grid item md={6} xs={2}></Grid>
                       <Grid
                         item
-                        md={4}
+                        md={6}
                         xs={12}
                         sm={12}
                         className={classes.modalActions}
@@ -340,7 +359,7 @@ const ManageSalary = (props) => {
                 <div
                   className={`${classes.modalTitle}`}
                 >
-                  <h2 id="transition-modal-title">{appStrings.deleteSalary}</h2>
+                  <h2 id="transition-modal-title">{appStrings.deleteIncome}</h2>
                 </div>
                 <div className={classes.deleteContent}>
                   <DeleteIcon />

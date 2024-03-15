@@ -126,7 +126,7 @@ function App() {
         { path: '/login', element: <Login />, errorElement: <NotFound /> },
         { path: "/manage-expense", element: <ManageExpenseContainer />, errorElement: <NotFound /> },
         { path: "/halal-check", element: <HalalCheckContainer />, errorElement: <NotFound /> },
-        { path: "/manage-salary", element: <ManageSalaryContainer />, errorElement: <NotFound /> },
+        { path: "/manage-income", element: <ManageSalaryContainer />, errorElement: <NotFound /> },
         { path: "/manage-journal", element: <StockJournalPage />, errorElement: <NotFound /> },
         { path: "/manage-equity", element: <ManageEquityContainer />, errorElement: <NotFound /> },
         { path: "/manage-holding", element: <ManageHolding />, errorElement: <NotFound /> }

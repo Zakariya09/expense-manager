@@ -28,8 +28,8 @@ const headersData = [
     active:true,
   },
   {
-    label: "Manage Salary",
-    href: "/manage-salary",
+    label: "Manage Income",
+    href: "/manage-income",
     icon: <MonetizationOnIcon />,
   },
   {

@@ -8,7 +8,11 @@ label {
     justify-content: center;
 }
 
-.text-danger{
+.text-danger {
     color: #780206;
     margin: 0px 9px;
-  }
+}
+
+.w-100 {
+    width: 100%
+}
